@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const platforms: { key: DesktopPlatform; name: string; description: string; requirements: string; icon: typeof Monitor; packageLabel: string }[] = [
   { key: "windows", name: "Windows", description: "64-bit Windows desktop", requirements: "Windows 10 or later", icon: Monitor, packageLabel: ".exe / .msi" },
-  { key: "linux", name: "Ubuntu / Linux", description: "64-bit Linux desktop", requirements: "Ubuntu or compatible distro", icon: Terminal, packageLabel: ".AppImage / .deb / .rpm" },
+  { key: "linux", name: "Ubuntu / Linux", description: "64-bit Linux desktop", requirements: "Ubuntu or compatible distro", icon: Terminal, packageLabel: ".tar.gz installer bundle" },
   { key: "macos", name: "macOS", description: "Apple silicon or Intel, when published", requirements: "A compatible macOS release", icon: Sparkles, packageLabel: ".dmg / .pkg" },
 ];
 
