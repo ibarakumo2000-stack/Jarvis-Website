@@ -657,3 +657,28 @@ h1, h2, h3, p { margin-top: 0; }
  .reveal-pending:not(.is-revealed) {opacity:1;filter:none}
  .page-transition {animation:none}
 }
+
+
+/* Custom not-found experience */
+.not-found-page { min-height:66vh;display:grid;place-items:center;padding-top:85px;padding-bottom:90px; }
+.not-found-copy {position:relative;width:min(760px,100%);padding:58px 0}
+.not-found-code {display:inline-flex;align-items:center;border:1px solid rgba(215,182,117,.3);color:var(--gold);padding:5px 9px;font-size:8px;letter-spacing:.16em;font-weight:700;margin-bottom:25px}
+.not-found-copy h1 {font-size:clamp(52px,7vw,82px);line-height:.98;letter-spacing:-.075em;font-weight:500;margin:23px 0}
+.not-found-copy h1 span {color:#8999a8;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-style:italic;letter-spacing:-.07em}
+.not-found-copy .page-lede {max-width:560px}
+.not-found-orbit {position:absolute;right:12px;top:24px;width:140px;height:140px;display:grid;place-items:center;border:1px solid rgba(128,228,244,.18);border-radius:50%;color:rgba(128,228,244,.65);font:italic 80px Georgia,serif;animation:mark-drift 8s ease-in-out infinite}
+.not-found-orbit::before,.not-found-orbit::after {content:"";position:absolute;inset:8px -4px;border:1px solid rgba(128,228,244,.14);border-radius:50%;transform:rotate(32deg)}
+.not-found-orbit::after {inset:-12px 35px;transform:rotate(-25deg)}
+.not-found-orbit i {position:absolute;width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.not-found-orbit i:nth-of-type(1) {left:8px;top:42px}.not-found-orbit i:nth-of-type(2) {right:8px;bottom:35px}
+.not-found-links {display:flex;flex-wrap:wrap;gap:22px;margin-top:30px}
+.not-found-links>a {display:inline-flex;align-items:center;gap:8px;color:#98aab8;font-size:10px;transition:color .2s ease}
+.not-found-links>a:hover {color:var(--cyan)}
+.not-found-links svg {color:var(--cyan)}
+@media(max-width:650px) {
+ .not-found-page {min-height:58vh;padding-top:50px;padding-bottom:60px}
+ .not-found-copy {padding:40px 0}
+ .not-found-copy h1 {font-size:clamp(47px,12vw,65px)}
+ .not-found-orbit {right:0;top:0;width:88px;height:88px;font-size:50px;opacity:.5}
+ .not-found-links {flex-direction:column;gap:14px}
+}
