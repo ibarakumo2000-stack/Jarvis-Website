@@ -28,6 +28,7 @@ export default function Reveal({
     }
 
     element.style.setProperty("--reveal-delay", `${delay}ms`);
+    element.classList.add("reveal-pending");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
