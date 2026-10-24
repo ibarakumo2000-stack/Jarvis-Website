@@ -1,3 +1,4 @@
+import { getLatestDesktopRelease } from "@/lib/releases";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -60,18 +61,21 @@ const capabilities = [
 
 const platforms = [
   {
+    key: "windows" as const,
     name: "Windows",
     detail: "Windows 10 or later · 64-bit",
     format: "Planned package: .exe",
     icon: Monitor,
   },
   {
+    key: "linux" as const,
     name: "Ubuntu / Linux",
     detail: "64-bit Linux desktop",
     format: "Planned packages: AppImage / .deb",
     icon: Terminal,
   },
   {
+    key: "macos" as const,
     name: "macOS",
     detail: "Apple silicon and Intel targets",
     format: "Planned package: .dmg",
@@ -166,12 +170,16 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const latestRelease = await getLatestDesktopRelease();
+  const availablePlatforms = platforms.filter((platform) => latestRelease?.assets[platform.key]);
+  const hasInstaller = availablePlatforms.length > 0;
+
   return (
     <main>
       <div className="announcement">
         <span className="announcement-pulse" />
-        <span>THE DESKTOP EXPERIENCE IS IN DEVELOPMENT</span>
+        <span>{hasInstaller ? "A JARVIS DESKTOP INSTALLER IS AVAILABLE" : "THE DESKTOP EXPERIENCE IS IN DEVELOPMENT"}</span>
         <a href="#downloads">Follow the first release <ArrowUpRight size={13} /></a>
       </div>
 
@@ -317,8 +325,13 @@ export default function Home() {
           </div>
           <div className="release-notice">
             <div className="release-notice-icon"><Download size={19} /></div>
-            <div className="release-notice-copy"><strong>First public installers are in preparation.</strong><span>No verified desktop installer has been published yet. We will not label a build as downloadable until its release assets are available.</span></div>
-            <a href={releaseUrl} target="_blank" rel="noreferrer">Open release page <ArrowUpRight size={15} /></a>
+            <div className="release-notice-copy">
+              <strong>{hasInstaller ? `JARVIS ${latestRelease?.tag_name} is available.` : "No verified desktop installer is published yet."}</strong>
+              <span>{hasInstaller
+                ? `Direct downloads are ready for ${availablePlatforms.map((platform) => platform.name).join(", ")}. Other platforms will become available after their installers are built and validated.`
+                : "The download links activate automatically when a stable release contains a verified installer for your operating system."}</span>
+            </div>
+            <a href={latestRelease?.html_url ?? releaseUrl} target="_blank" rel="noreferrer">Open release page <ArrowUpRight size={15} /></a>
           </div>
           <div className="platform-grid">
             {platforms.map((platform) => {
@@ -326,11 +339,15 @@ export default function Home() {
               return (
                 <article className="platform-card" key={platform.name}>
                   <div className="platform-icon"><Icon size={23} strokeWidth={1.5} /></div>
-                  <div className="platform-status"><span className="status-indicator" /> BUILD PREPARATION</div>
+                  <div className="platform-status"><span className={latestRelease?.assets[platform.key] ? "status-indicator status-indicator-ready" : "status-indicator"} /> {latestRelease?.assets[platform.key] ? "INSTALLER AVAILABLE" : "BUILD PREPARATION"}</div>
                   <h3>{platform.name}</h3>
                   <p>{platform.detail}</p>
-                  <div className="platform-format">{platform.format}</div>
-                  <a className="platform-link" href={`/api/download?platform=${platform.name === "Windows" ? "windows" : platform.name === "macOS" ? "macos" : "linux"}`}>Download installer <Download size={15} /></a>
+                  <div className="platform-format">{latestRelease?.assets[platform.key]?.name ?? platform.format}</div>
+                  {latestRelease?.assets[platform.key] ? (
+                    <a className="platform-link" href={`/api/download?platform=${platform.key}`}>Download installer <Download size={15} /></a>
+                  ) : (
+                    <span className="platform-link platform-link-disabled">Installer not published yet</span>
+                  )}
                 </article>
               );
             })}
