@@ -15,6 +15,14 @@ export default async function Home() {
           <h1>Intelligence.<br /><span>At your</span> command<span className="title-period">.</span></h1>
           <p className="hero-lede">A more thoughtful desktop companion. Bring local AI, useful automation, and a natural voice-and-chat experience into one focused workspace.</p>
           <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore JARVIS <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/features">Discover capabilities <ArrowUpRight size={15} /></Link></div>
+          <div className="hero-actions hero-download-actions" aria-label="Download JARVIS for your operating system">
+            {release?.assets.windows ? <a className="button button-quiet" href="/api/download?platform=windows"><Download size={15} /> Windows</a> : <button className="button button-disabled" type="button" disabled>Windows · Not published</button>}
+            {release?.assets.linux ? <a className="button button-quiet" href="/api/download?platform=linux"><Download size={15} /> Ubuntu / Linux</a> : <button className="button button-disabled" type="button" disabled>Ubuntu / Linux · Not published</button>}
+            {release?.macosVariants.arm64 ? <a className="button button-quiet" href="/api/download?platform=macos&arch=arm64"><Download size={15} /> Mac · Apple silicon</a> : null}
+            {release?.macosVariants.x86_64 ? <a className="button button-quiet" href="/api/download?platform=macos&arch=x86_64"><Download size={15} /> Mac · Intel</a> : null}
+            {!release?.macosVariants.arm64 && !release?.macosVariants.x86_64 && release?.assets.macos ? <a className="button button-quiet" href="/api/download?platform=macos"><Download size={15} /> macOS</a> : null}
+            {!release?.assets.macos ? <button className="button button-disabled" type="button" disabled>macOS · Not published</button> : null}
+          </div>
           <div className="hero-trust-row"><span><LockKeyhole size={14} /> Local-first direction</span><span><ShieldCheck size={14} /> You stay in control</span></div>
         </div>
         <Reveal className="hero-visual reveal-hero"><div className="visual-topline"><span>FIG. 001 — SYSTEM CORE</span><span>INTERFACE / PREVIEW</span></div><InteractiveCore /><div className="visual-footer"><span className="visual-status"><span className="signal-dot" /> DESIGNED FOR THE DESKTOP</span><span>CORE / 56</span></div></Reveal>
