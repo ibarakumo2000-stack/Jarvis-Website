@@ -52,7 +52,7 @@ export default async function DownloadsPage() {
         {release.checksums && <p className="installer-guide-checksum"><ShieldCheck size={16} /> Checksum file: <a href={release.checksums.url} target="_blank" rel="noreferrer">{release.checksums.name} <ArrowUpRight size={13} /></a></p>}
       </section>}
       {release?.assets.macos && <section className="page-content section-wrap installer-guide-section">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> macOS QUICK START</div><h2>Bring JARVIS to<br /><span>your Mac.</span></h2><p>Choose the installer that matches your Mac's processor: Apple silicon (M-series) or Intel.</p></Reveal>
+        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> macOS QUICK START</div><h2>Bring JARVIS to<br /><span>your Mac.</span></h2><p>Choose the installer that matches your Mac&apos;s processor: Apple silicon (M-series) or Intel.</p></Reveal>
         <div className="offline-steps">
           <Reveal className="offline-step"><span className="offline-step-number">01</span><div><h3>Select your Mac architecture</h3><p>Use the Apple silicon or Intel button on the macOS card above. The two disk images contain different native runtimes.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
           <Reveal className="offline-step" delay={70}><span className="offline-step-number">02</span><div><h3>Move the app into Applications</h3><p>Open the downloaded DMG and drag JARVIS.app into the Applications folder, then launch it from Applications.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
