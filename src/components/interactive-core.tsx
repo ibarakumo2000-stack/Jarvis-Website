@@ -82,6 +82,8 @@ export default function InteractiveCore() {
   const rotationRef = useRef({ x: -0.2, y: 0.55, z: -0.12 });
   const dragRef = useRef({ active: false, x: 0, y: 0 });
   const pointerRef = useRef({ x: 0, y: 0 });
+  const drawRef = useRef<(() => void) | null>(null);
+  const reducedMotionRef = useRef(false);
   const [engaged, setEngaged] = useState(false);
 
   useEffect(() => {
@@ -90,6 +92,7 @@ export default function InteractiveCore() {
     if (!canvas || !context) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    reducedMotionRef.current = reducedMotion;
     const host = canvas.parentElement;
     if (!host) return;
 
@@ -238,6 +241,8 @@ export default function InteractiveCore() {
       context.stroke();
     };
 
+    drawRef.current = draw;
+
     const tick = (time: number) => {
       if (destroyed || reducedMotion || !visible) return;
       if (lastTime) elapsed += Math.min(time - lastTime, 40);
@@ -270,6 +275,7 @@ export default function InteractiveCore() {
       observer.disconnect();
       resizeObserver.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
+      drawRef.current = null;
     };
   }, [engaged]);
 
@@ -283,13 +289,17 @@ export default function InteractiveCore() {
       x: Math.max(-1, Math.min(1, (event.clientX - window.innerWidth / 2) / window.innerWidth)),
       y: Math.max(-1, Math.min(1, (event.clientY - window.innerHeight / 2) / window.innerHeight)),
     };
-    if (!dragRef.current.active) return;
+    if (!dragRef.current.active) {
+      if (reducedMotionRef.current) drawRef.current?.();
+      return;
+    }
     const dx = event.clientX - dragRef.current.x;
     const dy = event.clientY - dragRef.current.y;
     rotationRef.current.y += dx * 0.008;
     rotationRef.current.x = Math.max(-1.3, Math.min(1.3, rotationRef.current.x + dy * 0.008));
     dragRef.current.x = event.clientX;
     dragRef.current.y = event.clientY;
+    if (reducedMotionRef.current) drawRef.current?.();
   };
 
   const onPointerUp = (event: PointerEvent<HTMLCanvasElement>) => {
@@ -307,11 +317,13 @@ export default function InteractiveCore() {
     else if (event.key === "ArrowDown") rotationRef.current.x = Math.min(1.3, rotationRef.current.x + step);
     else return;
     event.preventDefault();
+    if (reducedMotionRef.current) drawRef.current?.();
   };
 
   const resetView = () => {
     rotationRef.current = { x: -0.2, y: 0.55, z: -0.12 };
     pointerRef.current = { x: 0, y: 0 };
+    if (reducedMotionRef.current) drawRef.current?.();
   };
 
   return (
