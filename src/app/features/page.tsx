@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, AudioLines, Code2, Cpu, MonitorCog, Search, ShieldCheck, Workflow } from "lucide-react";
+import { ArrowRight, ArrowUpRight, AudioLines, Code2, Cpu, MonitorCog, Search, Workflow } from "lucide-react";
 import Reveal from "@/components/reveal";
 
 export const metadata: Metadata = {
