@@ -1,7 +1,6 @@
 import { getLatestDesktopRelease } from "@/lib/releases";
 import {
   ArrowDownRight,
-  ArrowRight,
   ArrowUpRight,
   AudioLines,
   Check,
