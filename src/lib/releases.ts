@@ -10,6 +10,7 @@ export type LatestDesktopRelease = {
   tag_name: string;
   html_url: string;
   published_at?: string;
+  checksums?: InstallerAsset;
   assets: Partial<Record<DesktopPlatform, InstallerAsset>>;
 };
 
@@ -137,6 +138,7 @@ export async function getLatestDesktopRelease(): Promise<LatestDesktopRelease | 
       ...(typeof release.published_at === "string"
         ? { published_at: release.published_at }
         : {}),
+      checksums: assets.find((asset) => /^(sha256sums|checksums)\.txt$/i.test(asset.name)),
       assets: {
         windows: preferredAsset(assets, "windows"),
         linux: preferredAsset(assets, "linux"),
