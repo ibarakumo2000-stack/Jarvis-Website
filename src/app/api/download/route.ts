@@ -32,7 +32,13 @@ export async function GET(request: NextRequest) {
   if (!platform) return downloadsFallback(request);
 
   const release = await getLatestDesktopRelease();
-  const asset = release?.assets[platform];
+  const architecture = request.nextUrl.searchParams.get("arch")?.toLowerCase();
+  const asset =
+    platform === "macos"
+      ? architecture === "arm64" || architecture === "x86_64"
+        ? release?.macosVariants[architecture]
+        : release?.assets.macos
+      : release?.assets[platform];
 
   // Redirect only to a real, stable-release installer for the requested OS.
   // If a package has not been published yet, return the visitor to the release
