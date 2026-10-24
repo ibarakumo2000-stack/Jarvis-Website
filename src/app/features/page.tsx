@@ -32,7 +32,7 @@ export default function FeaturesPage() {
         </Reveal>
       </section>
       <section className="page-content section-wrap">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> THE TOOLSET</div><h2>Find what you need.<br /><span>Know what to expect.</span></h2><p>Each capability has a different role. Status labels are intentionally clear: they don't imply a feature works on every operating system or without its required setup.</p></Reveal>
+        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> THE TOOLSET</div><h2>Find what you need.<br /><span>Know what to expect.</span></h2><p>Each capability has a different role. Status labels are intentionally clear: they don&apos;t imply a feature works on every operating system or without its required setup.</p></Reveal>
         <div className="capability-page-grid">
           {capabilities.map((item, index) => {
             const Icon = item.icon;
