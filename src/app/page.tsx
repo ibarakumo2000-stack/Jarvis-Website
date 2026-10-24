@@ -1,20 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, AudioLines, Check, CloudOff, Cpu, Download, LockKeyhole, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Reveal from "@/components/reveal";
+import InteractiveCore from "@/components/interactive-core";
 import { getLatestDesktopRelease } from "@/lib/releases";
-
-function CoreGraphic() {
-  return (
-    <div className="core-stage" aria-label="Abstract JARVIS system core illustration" role="img">
-      <div className="core-grid" /><div className="core-coordinates coordinate-top">LOCAL INTELLIGENCE <span>01 / 04</span></div>
-      <div className="core-coordinates coordinate-bottom">SYSTEM STATUS <span>READY TO EXPLORE</span></div>
-      <div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit orbit-three" /><div className="orbit orbit-four" />
-      <div className="core-halo" /><div className="core-disc"><div className="core-inner"><div className="core-glyph">J</div><div className="core-line" /><div className="core-caption">J.A.R.V.I.S.</div></div></div>
-      <div className="core-dot dot-one" /><div className="core-dot dot-two" /><div className="core-dot dot-three" />
-      <div className="core-label label-left"><span className="signal-dot" /> LOCAL MODEL</div><div className="core-label label-right"><span className="signal-dot signal-dot-gold" /> YOUR CONTROL</div><div className="core-scanline" />
-    </div>
-  );
-}
 
 export default async function Home() {
   const release = await getLatestDesktopRelease();
@@ -29,7 +17,7 @@ export default async function Home() {
           <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore JARVIS <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/features">Discover capabilities <ArrowUpRight size={15} /></Link></div>
           <div className="hero-trust-row"><span><LockKeyhole size={14} /> Local-first direction</span><span><ShieldCheck size={14} /> You stay in control</span></div>
         </div>
-        <Reveal className="hero-visual reveal-hero"><div className="visual-topline"><span>FIG. 001 — SYSTEM CORE</span><span>INTERFACE / PREVIEW</span></div><CoreGraphic /><div className="visual-footer"><span className="visual-status"><span className="signal-dot" /> DESIGNED FOR THE DESKTOP</span><span>CORE / 56</span></div></Reveal>
+        <Reveal className="hero-visual reveal-hero"><div className="visual-topline"><span>FIG. 001 — SYSTEM CORE</span><span>INTERFACE / PREVIEW</span></div><InteractiveCore /><div className="visual-footer"><span className="visual-status"><span className="signal-dot" /> DESIGNED FOR THE DESKTOP</span><span>CORE / 56</span></div></Reveal>
         <div className="hero-side-note"><span>01</span><span className="side-note-line" /> DESIGNED FOR THE DESKTOP</div>
       </section>
       <section className="signal-strip" aria-label="JARVIS principles"><div className="signal-strip-inner">
