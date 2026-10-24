@@ -21,7 +21,7 @@ import {
 
 const releaseUrl =
   process.env.NEXT_PUBLIC_DESKTOP_RELEASES_URL ??
-  "https://github.com/ibarakumo2000-stack/Mark-56/releases/latest";
+  "https://github.com/ibarakumo2000-stack/Mark-56/releases";
 
 const capabilities = [
   {
