@@ -186,7 +186,7 @@ export default function Home() {
           <a href="#downloads">Downloads</a>
           <a href="#faq">FAQ</a>
         </nav>
-        <a className="header-cta" href="#downloads">Get JARVIS <ArrowUpRight size={15} /></a>
+        <a className="header-cta" href="/api/download">Get JARVIS <Download size={15} /></a>
       </header>
 
       <section className="hero section-wrap" id="top">
@@ -199,7 +199,7 @@ export default function Home() {
             focused experience.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#downloads">Explore downloads <ArrowRight size={16} /></a>
+            <a className="button button-primary" href="/api/download">Get JARVIS <Download size={16} /></a>
             <a className="button button-quiet" href="#capabilities">Discover the system <ArrowDownRight size={16} /></a>
           </div>
           <div className="hero-trust-row">
@@ -330,7 +330,7 @@ export default function Home() {
                   <h3>{platform.name}</h3>
                   <p>{platform.detail}</p>
                   <div className="platform-format">{platform.format}</div>
-                  <a className="platform-link" href={releaseUrl} target="_blank" rel="noreferrer">Check release assets <ArrowUpRight size={15} /></a>
+                  <a className="platform-link" href={`/api/download?platform=${platform.name === "Windows" ? "windows" : platform.name === "macOS" ? "macos" : "linux"}`}>Download installer <Download size={15} /></a>
                 </article>
               );
             })}
@@ -378,7 +378,7 @@ export default function Home() {
           <SectionEyebrow>THE NEXT INTERFACE</SectionEyebrow>
           <h2>Your desktop.<br /><span>With a new point of view.</span></h2>
           <p>Follow the release hub as we prepare the first installable builds.</p>
-          <a className="button button-primary" href={releaseUrl} target="_blank" rel="noreferrer">Follow JARVIS releases <ArrowUpRight size={16} /></a>
+          <a className="button button-primary" href="/api/download">Get JARVIS <Download size={16} /></a>
         </div>
         <div className="cta-endmark"><span>J</span><div className="cta-ring" /><div className="cta-ring cta-ring-two" /></div>
       </section>
