@@ -757,3 +757,10 @@ h1, h2, h3, p { margin-top: 0; }
  .installer-guide-section {padding-top:48px;padding-bottom:55px}
  .installer-guide-checksum {align-items:flex-start;flex-wrap:wrap}
 }
+
+/* Platform-specific macOS download choices */
+.macos-download-options { display:flex;flex-direction:column;gap:8px;margin-top:auto; }
+.macos-download-options .download-button { margin-top:0; }
+@media(max-width:600px) {
+ .macos-download-options { width:100%; }
+}
