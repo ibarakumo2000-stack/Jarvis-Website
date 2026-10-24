@@ -1,5 +1,7 @@
 export type DesktopPlatform = "windows" | "linux" | "macos";
 
+export type MacArchitecture = "arm64" | "x86_64";
+
 export type InstallerAsset = {
   name: string;
   url: string;
@@ -11,6 +13,7 @@ export type LatestDesktopRelease = {
   html_url: string;
   published_at?: string;
   checksums?: InstallerAsset;
+  macosVariants: Partial<Record<MacArchitecture, InstallerAsset>>;
   assets: Partial<Record<DesktopPlatform, InstallerAsset>>;
 };
 
@@ -132,6 +135,20 @@ export async function getLatestDesktopRelease(): Promise<LatestDesktopRelease | 
         ? release.html_url
         : "https://github.com/ibarakumo2000-stack/Mark-56/releases";
 
+    const macosPackages = assets.filter(
+      (asset) =>
+        /(?:macos|darwin)/i.test(asset.name) &&
+        /\.(dmg|pkg)$/i.test(asset.name),
+    );
+    const macosVariants: LatestDesktopRelease["macosVariants"] = {
+      arm64: macosPackages.find((asset) =>
+        /(?:arm64|aarch64|apple[-_ ]?silicon)/i.test(asset.name),
+      ),
+      x86_64: macosPackages.find((asset) =>
+        /(?:x86_64|intel|x64)/i.test(asset.name),
+      ),
+    };
+
     return {
       tag_name: tag,
       html_url: htmlUrl,
@@ -139,6 +156,7 @@ export async function getLatestDesktopRelease(): Promise<LatestDesktopRelease | 
         ? { published_at: release.published_at }
         : {}),
       checksums: assets.find((asset) => /^(sha256sums|checksums)\.txt$/i.test(asset.name)),
+      macosVariants,
       assets: {
         windows: preferredAsset(assets, "windows"),
         linux: preferredAsset(assets, "linux"),
