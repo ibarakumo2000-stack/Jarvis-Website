@@ -6,6 +6,7 @@ import {
   Check,
   CloudOff,
   Cpu,
+  Download,
   Github,
   LockKeyhole,
   Mic,
