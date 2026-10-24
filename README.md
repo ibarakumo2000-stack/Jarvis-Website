@@ -41,7 +41,7 @@ Never put private API keys or signing credentials in a `NEXT_PUBLIC_*` variable.
 
 ## Releases and installers
 
-The download center currently points visitors to the official Mark-56 release page and clearly indicates that public desktop installers are not yet published. Do not advertise an installer as available until a real, tested release asset exists.
+The download center uses `/api/download` to detect the visitor's platform and redirect directly to a real installer asset attached to the latest stable Mark-56 GitHub release. It only accepts platform-appropriate installer extensions (`.exe`/`.msi`, `.AppImage`/`.deb`/`.rpm`, `.dmg`/`.pkg` or a platform-named macOS zip) hosted under the official GitHub Releases download path. If no stable release or platform installer exists yet, the route returns the visitor to the release center rather than exposing a raw API error or downloading a source archive. Do not advertise an installer as available until a real, tested release asset exists.
 
 The site itself does not create desktop installers or run local AI in the browser. The intended release process is:
 
