@@ -738,3 +738,22 @@ h1, h2, h3, p { margin-top: 0; }
   .core-halo-interactive {transition:none}
   .core-control-button {transition:none}
 }
+
+
+/* Windows installer release integration */
+.download-hero-download {position:relative;width:100%;justify-content:space-between;margin:3px 0 18px;min-height:45px}
+.download-hero-card .text-link {display:inline-flex;align-items:center;gap:6px}
+.checksum-link {display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:9px;color:var(--cyan);font-size:9px;line-height:1.5;transition:color .2s ease}
+.checksum-link:hover {color:#d8f9ff}
+.checksum-link svg {flex:0 0 auto}
+.installer-guide-section {padding-top:70px;padding-bottom:88px}
+.installer-guide-section .section-heading {margin-bottom:34px}
+.installer-guide-checksum {display:flex;align-items:center;gap:8px;margin:22px 0 0;padding:13px 15px;border:1px solid rgba(128,228,244,.15);background:rgba(53,191,217,.025);color:#879baa;font-size:10px;line-height:1.6}
+.installer-guide-checksum>svg {flex:0 0 auto;color:var(--cyan)}
+.installer-guide-checksum a {display:inline-flex;align-items:center;gap:5px;color:var(--cyan);font-weight:700}
+.installer-guide-checksum a:hover {color:#d8f9ff}
+@media(max-width:600px) {
+ .download-hero-download {min-height:43px}
+ .installer-guide-section {padding-top:48px;padding-bottom:55px}
+ .installer-guide-checksum {align-items:flex-start;flex-wrap:wrap}
+}
