@@ -358,7 +358,6 @@ export default function InteractiveCore() {
           </div>
         </div>
       </div>
-      <p className="core-interaction-hint">EXPLORE IN 3D <span>—</span> DRAG, ROTATE, INTERACT</p>
     </div>
   );
 }
