@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
 export const metadata: Metadata = {
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   title: {
     default: "JARVIS — Intelligence, at your command",
     template: "%s | JARVIS",
@@ -33,10 +38,7 @@ export const metadata: Metadata = {
     description:
       "A local-first desktop AI assistant. Your machine, your models, your control.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
@@ -46,14 +48,15 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <a className="skip-to-content" href="#main-content">Skip to content</a>
+        <SiteHeader />
+        <div id="main-content">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   );
 }
