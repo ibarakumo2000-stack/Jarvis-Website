@@ -22,7 +22,7 @@ function detectPlatform(request: NextRequest): DesktopPlatform | null {
 
 function downloadsFallback(request: NextRequest): NextResponse {
   return NextResponse.redirect(
-    new URL("/?download=not-ready#downloads", request.url),
+    new URL("/downloads?download=not-ready", request.url),
     307,
   );
 }
