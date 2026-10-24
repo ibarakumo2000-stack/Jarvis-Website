@@ -2,11 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://jarvis-website.vercel.app";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
   title: {
     default: "JARVIS — Intelligence, at your command",
     template: "%s | JARVIS",
