@@ -35,7 +35,7 @@ export default function SiteHeader() {
           <span className="brand-wordmark">JARVIS<span className="brand-period">.</span></span>
         </Link>
 
-        <nav className={`desktop-nav ${menuOpen ? "nav-open" : ""}`} aria-label="Main navigation">
+        <nav id="mobile-navigation" className={`desktop-nav ${menuOpen ? "nav-open" : ""}`} aria-label="Main navigation">
           {navigation.map((item) => {
             const active = item.href === "/"
               ? pathname === "/"
