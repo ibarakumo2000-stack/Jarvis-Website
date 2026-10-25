@@ -94,6 +94,12 @@ export default function InteractiveCore() {
     if (!canvas || !context) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const activeSpherePoints = window.matchMedia("(max-width: 600px)").matches
+      ? spherePoints.slice(0, 104)
+      : spherePoints;
+    const activeLinks = links.filter(([from, to]) =>
+      from < activeSpherePoints.length && to < activeSpherePoints.length
+    );
     reducedMotionRef.current = reducedMotion;
     const host = canvas.parentElement;
     if (!host) return;
@@ -111,7 +117,8 @@ export default function InteractiveCore() {
       const bounds = host.getBoundingClientRect();
       width = Math.max(1, bounds.width);
       height = Math.max(1, bounds.height);
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.6);
+      // Cap canvas backing-store resolution to reduce GPU memory on high-DPI displays.
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.35);
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -195,9 +202,9 @@ export default function InteractiveCore() {
         context.stroke();
       }
 
-      const projected = spherePoints.map((point) => project(point, radius));
+      const projected = activeSpherePoints.map((point) => project(point, radius));
       context.lineWidth = engaged ? 0.8 : 0.55;
-      for (const [from, to] of links) {
+      for (const [from, to] of activeLinks) {
         const a = projected[from];
         const b = projected[to];
         if (a.depth < 0.42 && b.depth < 0.42) continue;
