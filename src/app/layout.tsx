@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 import "./globals.css";
+import "./premium-finish.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
