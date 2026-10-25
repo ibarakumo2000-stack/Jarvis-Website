@@ -23,6 +23,9 @@ body {
     var(--background);
 }
 
+/* Noise texture is decorative; keeping it faint reduces full-screen compositing cost. */
+body::before { opacity: .055; }
+
 /* The announcement and sticky navigation read as one floating glass system. */
 .site-announcement {
   position: relative;
@@ -320,8 +323,8 @@ body {
 .signal-strip {
   background: linear-gradient(100deg, rgba(15, 22, 31, .72), rgba(8, 12, 18, .82));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.015), inset 0 -1px 0 rgba(255,255,255,.012);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .signal-strip-inner > div {
@@ -404,8 +407,8 @@ body {
 .release-notice {
   border-radius: 12px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .faq-item {
