@@ -6,7 +6,9 @@ import { Power, RotateCcw } from "lucide-react";
 type Point3D = { x: number; y: number; z: number };
 type ProjectedPoint = Point3D & { sx: number; sy: number; depth: number; scale: number };
 
-const PARTICLE_COUNT = 250;
+const PARTICLE_COUNT = 144;
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 
 const spherePoints: Point3D[] = Array.from({ length: PARTICLE_COUNT }, (_, index) => {
@@ -53,7 +55,7 @@ function traceOrbit(
   opacity: number,
 ) {
   context.beginPath();
-  const steps = 160;
+  const steps = 96;
   for (let index = 0; index <= steps; index += 1) {
     const angle = (index / steps) * Math.PI * 2;
     const point = rotatePoint(
@@ -101,6 +103,7 @@ export default function InteractiveCore() {
     let frame = 0;
     let elapsed = 0;
     let lastTime = 0;
+    let lastDrawTime = 0;
     let visible = true;
     let destroyed = false;
 
@@ -134,7 +137,7 @@ export default function InteractiveCore() {
 
     const drawWireArc = (latitude: number, scale: number) => {
       context.beginPath();
-      const steps = 64;
+      const steps = 40;
       for (let index = 0; index <= steps; index += 1) {
         const longitude = (index / steps) * Math.PI * 2;
         const radius = Math.cos(latitude);
@@ -174,11 +177,11 @@ export default function InteractiveCore() {
         drawWireArc((latitudeIndex / 5) * (Math.PI / 2), radius);
       }
 
-      for (let longitudeIndex = 0; longitudeIndex < 12; longitudeIndex += 1) {
+      for (let longitudeIndex = 0; longitudeIndex < 8; longitudeIndex += 1) {
         context.beginPath();
         const longitude = (longitudeIndex / 12) * Math.PI;
-        for (let step = 0; step <= 38; step += 1) {
-          const latitude = -Math.PI / 2 + (step / 38) * Math.PI;
+        for (let step = 0; step <= 28; step += 1) {
+          const latitude = -Math.PI / 2 + (step / 28) * Math.PI;
           const point = project({
             x: Math.cos(latitude) * Math.cos(longitude),
             y: Math.sin(latitude),
@@ -244,34 +247,61 @@ export default function InteractiveCore() {
     drawRef.current = draw;
 
     const tick = (time: number) => {
-      if (destroyed || reducedMotion || !visible) return;
+      if (destroyed || reducedMotion || !visible || document.hidden) {
+        frame = 0;
+        return;
+      }
+
+      // Keep the core smooth while avoiding a full canvas redraw on every
+      // display refresh. 30 FPS is enough for this ambient visualization.
+      if (time - lastDrawTime < FRAME_INTERVAL) {
+        frame = window.requestAnimationFrame(tick);
+        return;
+      }
+
       if (lastTime) elapsed += Math.min(time - lastTime, 40);
       lastTime = time;
+      lastDrawTime = time;
       rotationRef.current.y += dragRef.current.active ? 0 : 0.0016 * (engaged ? 1.5 : 0.65);
       draw();
       frame = window.requestAnimationFrame(tick);
     };
 
+    const syncAnimation = () => {
+      if (destroyed) return;
+
+      if (reducedMotion || document.hidden || !visible) {
+        if (frame) window.cancelAnimationFrame(frame);
+        frame = 0;
+        lastTime = 0;
+        lastDrawTime = 0;
+        return;
+      }
+
+      if (!frame) {
+        lastTime = 0;
+        lastDrawTime = 0;
+        frame = window.requestAnimationFrame(tick);
+      }
+    };
+
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible && !reducedMotion && !frame) {
-        lastTime = 0;
-        frame = window.requestAnimationFrame(tick);
-      } else if (!visible && frame) {
-        window.cancelAnimationFrame(frame);
-        frame = 0;
-      }
+      syncAnimation();
     }, { threshold: 0.05 });
     observer.observe(host);
+
+    const onVisibilityChange = () => syncAnimation();
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
     resize();
-
-    if (!reducedMotion) frame = window.requestAnimationFrame(tick);
+    syncAnimation();
 
     return () => {
       destroyed = true;
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       observer.disconnect();
       resizeObserver.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
