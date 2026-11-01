@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, CheckCircle2, CircleHelp, Download, Monitor, ShieldCheck, Sparkles, Terminal } from "lucide-react";
+import { ArrowDownToLine, ArrowRight, ArrowUpRight, CheckCircle2, CircleHelp, Download, Monitor, ShieldCheck, Smartphone, Sparkles, Terminal } from "lucide-react";
 import Reveal from "@/components/reveal";
-import { getLatestDesktopRelease, type DesktopPlatform } from "@/lib/releases";
+import { getAndroidCompanionRelease, getLatestDesktopRelease, type DesktopPlatform } from "@/lib/releases";
 
 export const metadata: Metadata = {
   title: "Downloads",
-  description: "Find verified JARVIS desktop installers for Windows, Ubuntu/Linux, and macOS.",
+  description: "Download JARVIS desktop installers and the Android companion testing app.",
 };
 
 const platforms: { key: DesktopPlatform; name: string; description: string; requirements: string; icon: typeof Monitor; packageLabel: string }[] = [
@@ -21,7 +21,10 @@ function formatBytes(bytes?: number) {
 }
 
 export default async function DownloadsPage() {
-  const release = await getLatestDesktopRelease();
+  const [release, androidRelease] = await Promise.all([
+    getLatestDesktopRelease(),
+    getAndroidCompanionRelease(),
+  ]);
   const available = platforms.filter((platform) => release?.assets[platform.key]);
   return (
     <main className="inner-page">
@@ -32,6 +35,38 @@ export default async function DownloadsPage() {
       <section className="page-content section-wrap">
         <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> CHOOSE YOUR PLATFORM</div><h2>Built for the computer<br /><span>you actually use.</span></h2><p>Choose your operating system. If a package is not published, its status stays visible and you won&apos;t be sent to a source-code download by mistake.</p></Reveal>
         <div className="download-platform-grid">{platforms.map((platform,index)=>{const Icon=platform.icon;const asset=release?.assets[platform.key];return <Reveal key={platform.key} delay={index*70}><article className={asset?"download-platform-card is-available":"download-platform-card"}><div className="download-platform-top"><span className="download-platform-icon"><Icon size={24} strokeWidth={1.5}/></span><span className={asset?"availability-tag available":"availability-tag"}>{asset?"AVAILABLE":"IN PREPARATION"}</span></div><h3>{platform.name}</h3><p>{platform.description}</p><div className="platform-requirements"><span>REQUIREMENTS</span><strong>{platform.requirements}</strong></div><div className="platform-requirements"><span>PACKAGE TYPE</span><strong>{platform.key === "macos" && release?.macosVariants.arm64 && release?.macosVariants.x86_64 ? "Separate DMGs for Apple silicon and Intel" : asset?.name ?? platform.packageLabel}</strong></div>{platform.key === "macos" && (release?.macosVariants.arm64 || release?.macosVariants.x86_64) ? <div className="macos-download-options">{release?.macosVariants.arm64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=arm64">Apple silicon <ArrowDownToLine size={16}/></a>}{release?.macosVariants.x86_64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=x86_64">Intel Mac <ArrowDownToLine size={16}/></a>}</div> : asset ? <a className="button button-primary download-button" href={`/api/download?platform=${platform.key}`}>Download for {platform.name}<ArrowDownToLine size={16}/></a> : <button type="button" className="button button-disabled download-button" disabled>Installer not published yet</button>}{asset&&<p className="asset-size">{formatBytes(asset.size)} · Official GitHub asset</p>}{release?.checksums && <a className="checksum-link" href={release.checksums.url} target="_blank" rel="noreferrer">Verify SHA-256 checksum <ArrowUpRight size={13} /></a>}</article></Reveal>})}</div>
+      </section>
+      <section className="page-content section-wrap android-companion-download-section">
+        <Reveal className="section-heading">
+          <div className="section-eyebrow"><span className="eyebrow-mark" /> MOBILE COMPANION</div>
+          <h2>Take JARVIS<br /><span>with you.</span></h2>
+          <p>Pair your Android phone with the JARVIS desktop app over your local network. The current preview supports secure QR pairing and optional battery-status synchronisation.</p>
+        </Reveal>
+        <Reveal>
+          <article className="download-platform-card android-companion-card">
+            <div className="download-platform-top">
+              <span className="download-platform-icon"><Smartphone size={24} strokeWidth={1.5}/></span>
+              <span className="availability-tag available">TESTING BUILD</span>
+            </div>
+            <h3>Android Companion</h3>
+            <p>Android app for connecting your phone to your Mark 56 desktop assistant.</p>
+            <div className="platform-requirements"><span>REQUIREMENTS</span><strong>Android device · same local network as desktop</strong></div>
+            <div className="platform-requirements"><span>PACKAGE TYPE</span><strong>Android APK · debug-signed preview</strong></div>
+            {androidRelease?.apk ? (
+              <>
+                <a className="button button-primary download-button" href="/api/download?platform=android">Download Android APK <ArrowDownToLine size={16}/></a>
+                <p className="asset-size">{formatBytes(androidRelease.apk.size)} · Rolling preview · Updated {androidRelease.published_at ? new Date(androidRelease.published_at).toLocaleDateString() : "on each Android build"}</p>
+                <a className="checksum-link" href={androidRelease.html_url} target="_blank" rel="noreferrer">View Android preview release <ArrowUpRight size={13}/></a>
+              </>
+            ) : (
+              <>
+                <button type="button" className="button button-disabled download-button" disabled>Android build is being published</button>
+                <p className="asset-size">The APK download will activate automatically after the first successful publishing workflow.</p>
+              </>
+            )}
+            <p className="asset-size">This is a testing build, not a production-signed public release. Install only if you intend to test the companion features.</p>
+          </article>
+        </Reveal>
       </section>
       {release?.assets.windows && <section className="page-content section-wrap installer-guide-section">
         <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> WINDOWS QUICK START</div><h2>From download to<br /><span>first launch.</span></h2><p>The installer is published from the official Mark-56 release workflow. Use these steps after downloading the setup file.</p></Reveal>
