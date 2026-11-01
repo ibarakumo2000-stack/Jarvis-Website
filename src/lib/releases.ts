@@ -168,3 +168,68 @@ export async function getLatestDesktopRelease(): Promise<LatestDesktopRelease | 
     return null;
   }
 }
+
+
+export type AndroidCompanionRelease = {
+  tag_name: string;
+  html_url: string;
+  published_at?: string;
+  apk: InstallerAsset;
+};
+
+const ANDROID_PREVIEW_RELEASE_API =
+  "https://api.github.com/repos/ibarakumo2000-stack/Mark-56/releases/tags/android-companion-preview";
+
+export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRelease | null> {
+  try {
+    const response = await fetch(ANDROID_PREVIEW_RELEASE_API, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "JARVIS-Website",
+      },
+      next: { revalidate: 120 },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return null;
+
+    const payload: unknown = await response.json();
+    if (!payload || typeof payload !== "object") return null;
+    const release = payload as {
+      tag_name?: unknown;
+      html_url?: unknown;
+      published_at?: unknown;
+      draft?: unknown;
+      prerelease?: unknown;
+      assets?: unknown;
+    };
+    if (release.draft !== false || release.prerelease !== true) return null;
+    const tag = typeof release.tag_name === "string" ? release.tag_name : "";
+    if (tag !== "android-companion-preview") return null;
+    const assets = Array.isArray(release.assets) ? release.assets : [];
+    const apk = assets.find((candidate) => {
+      if (!candidate || typeof candidate !== "object") return false;
+      const asset = candidate as { name?: unknown; browser_download_url?: unknown };
+      return asset.name === "app-debug.apk" &&
+        typeof asset.browser_download_url === "string" &&
+        asset.browser_download_url.startsWith(OFFICIAL_DOWNLOAD_PREFIX);
+    }) as { name: string; browser_download_url: string; size?: number } | undefined;
+    if (!apk) return null;
+    const htmlUrl =
+      typeof release.html_url === "string" &&
+      release.html_url.startsWith("https://github.com/ibarakumo2000-stack/Mark-56/releases/")
+        ? release.html_url
+        : "https://github.com/ibarakumo2000-stack/Mark-56/releases/tag/android-companion-preview";
+    return {
+      tag_name: tag,
+      html_url: htmlUrl,
+      ...(typeof release.published_at === "string" ? { published_at: release.published_at } : {}),
+      apk: {
+        name: apk.name,
+        url: apk.browser_download_url,
+        ...(typeof apk.size === "number" ? { size: apk.size } : {}),
+      },
+    };
+  } catch {
+    return null;
+  }
+}
