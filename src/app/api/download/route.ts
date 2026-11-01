@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  getAndroidCompanionRelease,
   getLatestDesktopRelease,
   type DesktopPlatform,
 } from "@/lib/releases";
@@ -28,6 +29,13 @@ function downloadsFallback(request: NextRequest): NextResponse {
 }
 
 export async function GET(request: NextRequest) {
+  const requested = request.nextUrl.searchParams.get("platform")?.toLowerCase();
+  if (requested === "android") {
+    const androidRelease = await getAndroidCompanionRelease();
+    if (!androidRelease?.apk.url) return downloadsFallback(request);
+    return NextResponse.redirect(androidRelease.apk.url, 302);
+  }
+
   const platform = detectPlatform(request);
   if (!platform) return downloadsFallback(request);
 
