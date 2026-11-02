@@ -221,7 +221,7 @@ export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRele
         Accept: "application/vnd.github+json",
         "User-Agent": "JARVIS-Website",
       },
-      next: { revalidate: 120 },
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return null;
@@ -236,7 +236,7 @@ export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRele
         release.draft === false &&
         release.prerelease === false &&
         typeof release.tag_name === "string" &&
-        /^companion-v\\d+\\.\\d+\\.\\d+$/.test(release.tag_name))
+        /^companion-v\d+\.\d+\.\d+$/.test(release.tag_name))
       .sort((a, b) => {
         const aDate = typeof a.published_at === "string" ? Date.parse(a.published_at) : 0;
         const bDate = typeof b.published_at === "string" ? Date.parse(b.published_at) : 0;
