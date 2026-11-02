@@ -175,14 +175,48 @@ export type AndroidCompanionRelease = {
   html_url: string;
   published_at?: string;
   apk: InstallerAsset;
+  watchApk?: InstallerAsset;
+  checksums?: InstallerAsset;
 };
 
-const ANDROID_PREVIEW_RELEASE_API =
-  "https://api.github.com/repos/ibarakumo2000-stack/Mark-56/releases/tags/android-companion-preview";
+const ANDROID_RELEASES_API =
+  "https://api.github.com/repos/ibarakumo2000-stack/Mark-56/releases?per_page=50";
 
+function officialAndroidAsset(
+  candidates: unknown[],
+  expectedName: string,
+): InstallerAsset | undefined {
+  const item = candidates.find((candidate) => {
+    if (!candidate || typeof candidate !== "object") return false;
+    const asset = candidate as {
+      name?: unknown;
+      browser_download_url?: unknown;
+    };
+    return asset.name === expectedName &&
+      typeof asset.browser_download_url === "string" &&
+      asset.browser_download_url.startsWith(OFFICIAL_DOWNLOAD_PREFIX);
+  }) as {
+    name: string;
+    browser_download_url: string;
+    size?: number;
+  } | undefined;
+
+  if (!item) return undefined;
+  return {
+    name: item.name,
+    url: item.browser_download_url,
+    ...(typeof item.size === "number" ? { size: item.size } : {}),
+  };
+}
+
+/**
+ * Returns only an owner-signed, versioned Android release.
+ * Debug APKs from Actions artifacts and the old rolling preview are never
+ * eligible for the public download page.
+ */
 export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRelease | null> {
   try {
-    const response = await fetch(ANDROID_PREVIEW_RELEASE_API, {
+    const response = await fetch(ANDROID_RELEASES_API, {
       headers: {
         Accept: "application/vnd.github+json",
         "User-Agent": "JARVIS-Website",
@@ -193,42 +227,44 @@ export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRele
     if (!response.ok) return null;
 
     const payload: unknown = await response.json();
-    if (!payload || typeof payload !== "object") return null;
-    const release = payload as {
-      tag_name?: unknown;
-      html_url?: unknown;
-      published_at?: unknown;
-      draft?: unknown;
-      prerelease?: unknown;
-      assets?: unknown;
-    };
-    if (release.draft !== false || release.prerelease !== true) return null;
-    const tag = typeof release.tag_name === "string" ? release.tag_name : "";
-    if (tag !== "android-companion-preview") return null;
-    const assets = Array.isArray(release.assets) ? release.assets : [];
-    const apk = assets.find((candidate) => {
-      if (!candidate || typeof candidate !== "object") return false;
-      const asset = candidate as { name?: unknown; browser_download_url?: unknown };
-      return asset.name === "app-debug.apk" &&
-        typeof asset.browser_download_url === "string" &&
-        asset.browser_download_url.startsWith(OFFICIAL_DOWNLOAD_PREFIX);
-    }) as { name: string; browser_download_url: string; size?: number } | undefined;
-    if (!apk) return null;
-    const htmlUrl =
-      typeof release.html_url === "string" &&
-      release.html_url.startsWith("https://github.com/ibarakumo2000-stack/Mark-56/releases/")
-        ? release.html_url
-        : "https://github.com/ibarakumo2000-stack/Mark-56/releases/tag/android-companion-preview";
-    return {
-      tag_name: tag,
-      html_url: htmlUrl,
-      ...(typeof release.published_at === "string" ? { published_at: release.published_at } : {}),
-      apk: {
-        name: apk.name,
-        url: apk.browser_download_url,
-        ...(typeof apk.size === "number" ? { size: apk.size } : {}),
-      },
-    };
+    if (!Array.isArray(payload)) return null;
+
+    const releases = payload
+      .filter((candidate): candidate is Record<string, unknown> =>
+        !!candidate && typeof candidate === "object")
+      .filter((release) =>
+        release.draft === false &&
+        release.prerelease === false &&
+        typeof release.tag_name === "string" &&
+        /^companion-v\\d+\\.\\d+\\.\\d+$/.test(release.tag_name))
+      .sort((a, b) => {
+        const aDate = typeof a.published_at === "string" ? Date.parse(a.published_at) : 0;
+        const bDate = typeof b.published_at === "string" ? Date.parse(b.published_at) : 0;
+        return bDate - aDate;
+      });
+
+    for (const release of releases) {
+      const tag = release.tag_name as string;
+      const assets = Array.isArray(release.assets) ? release.assets : [];
+      const apk = officialAndroidAsset(assets, "JARVIS-Companion.apk");
+      if (!apk) continue;
+
+      const htmlUrl =
+        typeof release.html_url === "string" &&
+        release.html_url.startsWith("https://github.com/ibarakumo2000-stack/Mark-56/releases/")
+          ? release.html_url
+          : "https://github.com/ibarakumo2000-stack/Mark-56/releases";
+
+      return {
+        tag_name: tag,
+        html_url: htmlUrl,
+        ...(typeof release.published_at === "string" ? { published_at: release.published_at } : {}),
+        apk,
+        watchApk: officialAndroidAsset(assets, "JARVIS-Watch.apk"),
+        checksums: officialAndroidAsset(assets, "SHA256SUMS.txt"),
+      };
+    }
+    return null;
   } catch {
     return null;
   }

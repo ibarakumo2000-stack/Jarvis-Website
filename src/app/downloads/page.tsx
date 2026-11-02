@@ -6,7 +6,7 @@ import { getAndroidCompanionRelease, getLatestDesktopRelease, type DesktopPlatfo
 
 export const metadata: Metadata = {
   title: "Downloads",
-  description: "Download JARVIS desktop installers and the Android companion testing app.",
+  description: "Download official JARVIS desktop installers and versioned signed Android companion releases.",
 };
 
 const platforms: { key: DesktopPlatform; name: string; description: string; requirements: string; icon: typeof Monitor; packageLabel: string }[] = [
@@ -40,31 +40,33 @@ export default async function DownloadsPage() {
         <Reveal className="section-heading">
           <div className="section-eyebrow"><span className="eyebrow-mark" /> MOBILE COMPANION</div>
           <h2>Take JARVIS<br /><span>with you.</span></h2>
-          <p>Pair your Android phone with the JARVIS desktop app over your local network. The current preview supports secure QR pairing and optional battery-status synchronisation.</p>
+          <p>Install the official, versioned Android companion release. The phone and Wear OS packages are published only after release signing and signature verification.</p>
         </Reveal>
         <Reveal>
           <article className="download-platform-card android-companion-card">
             <div className="download-platform-top">
               <span className="download-platform-icon"><Smartphone size={24} strokeWidth={1.5}/></span>
-              <span className="availability-tag available">TESTING BUILD</span>
+              <span className="availability-tag available">SIGNED RELEASE</span>
             </div>
             <h3>Android Companion</h3>
-            <p>Android app for connecting your phone to your Mark 56 desktop assistant.</p>
-            <div className="platform-requirements"><span>REQUIREMENTS</span><strong>Android device · same local network as desktop</strong></div>
-            <div className="platform-requirements"><span>PACKAGE TYPE</span><strong>Android APK · debug-signed preview</strong></div>
+            <p>Production-signed phone companion for secure desktop pairing, notifications, media controls and supported wearable connections.</p>
+            <div className="platform-requirements"><span>REQUIREMENTS</span><strong>Android 8.0 or later · local network for first pairing</strong></div>
+            <div className="platform-requirements"><span>PACKAGE TYPE</span><strong>Versioned APK · owner-signed production release</strong></div>
             {androidRelease?.apk ? (
               <>
-                <a className="button button-primary download-button" href="/api/download?platform=android">Download Android APK <ArrowDownToLine size={16}/></a>
-                <p className="asset-size">{formatBytes(androidRelease.apk.size)} · Rolling preview · Updated {androidRelease.published_at ? new Date(androidRelease.published_at).toLocaleDateString() : "on each Android build"}</p>
-                <a className="checksum-link" href={androidRelease.html_url} target="_blank" rel="noreferrer">View Android preview release <ArrowUpRight size={13}/></a>
+                <a className="button button-primary download-button" href="/api/download?platform=android">Download signed Android APK <ArrowDownToLine size={16}/></a>
+                <p className="asset-size">{formatBytes(androidRelease.apk.size)} · {androidRelease.tag_name} · Published {androidRelease.published_at ? new Date(androidRelease.published_at).toLocaleDateString() : "as a stable release"}</p>
+                {androidRelease.checksums && <a className="checksum-link" href={androidRelease.checksums.url} target="_blank" rel="noreferrer">Verify APK SHA-256 checksum <ArrowUpRight size={13}/></a>}
+                {androidRelease.watchApk && <a className="checksum-link" href={androidRelease.watchApk.url}>Download JARVIS Watch APK <ArrowDownToLine size={13}/></a>}
+                <a className="checksum-link" href={androidRelease.html_url} target="_blank" rel="noreferrer">View official Android release <ArrowUpRight size={13}/></a>
               </>
             ) : (
               <>
-                <button type="button" className="button button-disabled download-button" disabled>Android build is being published</button>
-                <p className="asset-size">The APK download will activate automatically after the first successful publishing workflow.</p>
+                <button type="button" className="button button-disabled download-button" disabled>Signed Android release not published yet</button>
+                <p className="asset-size">Debug and CI testing APKs are intentionally not offered as public downloads. The button activates when a versioned release passes signing and verification.</p>
               </>
             )}
-            <p className="asset-size">This is a testing build, not a production-signed public release. Install only if you intend to test the companion features.</p>
+            <p className="asset-size">Direct APK installs may still trigger Android&apos;s app-verification prompt because the package is sideloaded. Keep Play Protect enabled and verify the published SHA-256 checksum before installation.</p>
           </article>
         </Reveal>
       </section>
