@@ -53,7 +53,9 @@ Never put private API keys or signing credentials in a NEXT_PUBLIC_* variable. V
 
 ## Releases and installers
 
-The release center reads the latest stable Mark-56 GitHub Release and identifies installer assets by platform. The download endpoint redirects directly only to a compatible installer asset hosted at the official GitHub Release download path. It rejects source archives, checksums, metadata files, and packages for another platform.
+The release center reads the latest stable Mark-56 desktop release and identifies installer assets by platform. Android downloads are handled separately: the page accepts only a versioned, non-prerelease `companion-vX.Y.Z` release containing the exact `JARVIS-Companion.apk` asset. The release workflow builds with the owner-managed signing key, verifies the phone and Wear OS APK signatures, checks their package IDs, and publishes SHA-256 checksums. Rolling preview/debug APKs and Actions artifacts are never served as public Android downloads.
+
+The download endpoint redirects only to compatible official GitHub Release assets. It rejects source archives, checksums, metadata files, debug APKs, and packages for another platform.
 
 If no stable release or platform installer exists yet, the release center keeps the platform marked as in preparation and the download route returns the visitor to /downloads instead of exposing a raw API error or downloading source code. Do not advertise an installer as available until a real, tested release asset exists.
 
