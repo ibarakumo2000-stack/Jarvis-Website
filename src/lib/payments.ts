@@ -55,32 +55,58 @@ async function databaseRequest<T>(path: string, init: RequestInit = {}): Promise
   return response.json() as Promise<T>;
 }
 
+const PRICING = {
+  lifetime: { amount: 100_000, displayPrice: "₦1,000", productVersion: "56.0.0" },
+  monthly: { amount: 150_000, displayPrice: "₦1,500", productVersion: "latest" },
+  yearly: { amount: 200_000, displayPrice: "₦2,000", productVersion: "latest" },
+} as const;
+
 export function getPlanConfiguration(plan: PurchasePlan) {
+  const fixed = PRICING[plan];
   if (plan === "lifetime") {
-    const amount = Number(process.env.JARVIS_LIFETIME_PRICE_KOBO ?? "0");
     return {
       plan,
-      productVersion: "56.0.0",
-      amount,
+      productVersion: fixed.productVersion,
+      amount: fixed.amount,
       planCode: "",
-      currency: process.env.PAYSTACK_CURRENCY ?? "NGN",
-      displayPrice: process.env.JARVIS_LIFETIME_PRICE_LABEL ?? "",
-      configured: Number.isSafeInteger(amount) && amount > 0,
+      currency: "NGN",
+      displayPrice: fixed.displayPrice,
+      configured: true,
     };
   }
   const code = process.env[plan === "monthly" ? "PAYSTACK_MONTHLY_PLAN_CODE" : "PAYSTACK_YEARLY_PLAN_CODE"]?.trim() ?? "";
-  const displayPrice = process.env[plan === "monthly" ? "JARVIS_MONTHLY_PRICE_LABEL" : "JARVIS_YEARLY_PRICE_LABEL"]?.trim() ?? "";
   return {
     plan,
-    productVersion: "latest",
-    amount: 0,
-    currency: process.env.PAYSTACK_CURRENCY ?? "NGN",
+    productVersion: fixed.productVersion,
+    amount: fixed.amount,
+    currency: "NGN",
     planCode: code,
-    displayPrice,
-    configured: Boolean(code && displayPrice),
+    interval: plan === "monthly" ? "monthly" as const : "annually" as const,
+    displayPrice: fixed.displayPrice,
+    configured: Boolean(code),
   };
 }
 
+/**
+ * Verify the configured Paystack plan before accepting a subscription checkout.
+ * This prevents a stale or incorrectly priced plan code from charging customers
+ * a different amount than the price shown on the JARVIS website.
+ */
+export async function validatePaystackPlan(
+  planCode: string,
+  expectedAmount: number,
+  expectedInterval: "monthly" | "annually",
+) {
+  type PlanResponse = {
+    status: boolean;
+    data?: { amount?: number; interval?: string; currency?: string };
+  };
+  const result = await paystackRequest<PlanResponse>(`/plan/${encodeURIComponent(planCode)}`);
+  return result.status === true &&
+    result.data?.amount === expectedAmount &&
+    result.data?.interval === expectedInterval &&
+    result.data?.currency === "NGN";
+}
 export function getPricingCatalog() {
   return (["lifetime", "monthly", "yearly"] as PurchasePlan[]).map((plan) => getPlanConfiguration(plan));
 }
