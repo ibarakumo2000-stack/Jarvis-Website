@@ -5,6 +5,7 @@ import {
   newPaymentReference,
   paystackRequest,
   type PurchasePlan,
+  validatePaystackPlan,
 } from "@/lib/payments";
 
 export const runtime = "nodejs";
@@ -30,6 +31,13 @@ export async function POST(request: NextRequest) {
     const config = getPlanConfiguration(plan);
     if (!config.configured) {
       return NextResponse.json({ error: "This plan is not ready for checkout yet. Please try again later." }, { status: 503 });
+    }
+
+    if (plan !== "lifetime") {
+      const validPlan = await validatePaystackPlan(config.planCode, config.amount, config.interval);
+      if (!validPlan) {
+        return NextResponse.json({ error: "The subscription price is being updated. Please try again later." }, { status: 503 });
+      }
     }
 
     const reference = newPaymentReference();
