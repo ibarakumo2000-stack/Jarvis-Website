@@ -9,7 +9,8 @@ const navigation = [
   { href: "/", label: "Overview" },
   { href: "/features", label: "Capabilities" },
   { href: "/offline", label: "Offline AI" },
-  { href: "/pricing", label: "Pricing" },\n  { href: "/downloads", label: "Downloads" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/downloads", label: "Downloads" },
   { href: "/updates", label: "Updates" },
   { href: "/faq", label: "Help & FAQ" },
 ];
