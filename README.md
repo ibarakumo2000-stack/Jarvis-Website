@@ -105,8 +105,8 @@ Payment initialization and verification run on the server. A successful callback
 6. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
 7. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
 5. Configure the Paystack webhook URL as `https://YOUR_DOMAIN/api/paystack/webhook`. Keep the webhook signing secret in `PAYSTACK_WEBHOOK_SECRET`.
-5. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
-6. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
+6. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
+7. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
 
 ### Important release-publishing requirement
 
