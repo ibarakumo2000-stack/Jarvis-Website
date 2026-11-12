@@ -764,3 +764,61 @@ h1, h2, h3, p { margin-top: 0; }
 @media(max-width:600px) {
  .macos-download-options { width:100%; }
 }
+
+
+/* JARVIS commerce and licence selection */
+.pricing-hero {align-items:center}
+.pricing-hero-note {padding:30px;border:1px solid rgba(128,228,244,.17);background:linear-gradient(145deg,rgba(128,228,244,.055),rgba(255,255,255,.012));}
+.pricing-hero-note h2 {font-size:clamp(27px,3vw,39px);line-height:1.08;letter-spacing:-.05em;font-weight:500;margin:22px 0 12px}
+.pricing-hero-note h2 span {color:#91a4b2;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:400}
+.pricing-hero-note p {font-size:11px;line-height:1.9;color:#91a1ad;margin:0 0 19px}
+.pricing-content {padding-top:12px}
+.pricing-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:stretch}
+.pricing-card {height:100%;display:flex;flex-direction:column;padding:28px;border:1px solid var(--line);background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(255,255,255,.012));}
+.pricing-card-premium {border-color:rgba(128,228,244,.32);background:linear-gradient(155deg,rgba(53,191,217,.09),rgba(255,255,255,.015) 55%)}
+.pricing-card-top {display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pricing-plan-icon {display:grid;place-items:center;width:43px;height:43px;border:1px solid rgba(128,228,244,.2);color:var(--cyan)}
+.pricing-kicker {margin:27px 0 8px;color:var(--cyan);font-size:8px;font-weight:700;letter-spacing:.17em}
+.pricing-card h2 {font-size:clamp(25px,3vw,34px);font-weight:500;letter-spacing:-.05em;margin:0}
+.pricing-description {min-height:38px;margin:10px 0 0;color:#8d9eab;font-size:11px;line-height:1.7}
+.pricing-price {margin:25px 0 20px;color:#f0f7fa;font-size:clamp(23px,3vw,32px);font-weight:500;letter-spacing:-.04em}
+.pricing-price small {display:block;margin-top:5px;color:#7e919e;font-size:9px;font-weight:400;letter-spacing:.06em}
+.pricing-card ul {list-style:none;padding:19px 0 23px;margin:0 0 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:13px}
+.pricing-card li {display:flex;align-items:flex-start;gap:9px;color:#b1bec8;font-size:10px;line-height:1.6}
+.pricing-card li svg {flex:0 0 auto;margin-top:1px;color:var(--cyan)}
+.checkout-options {margin-top:auto}
+.checkout-email-form {padding:15px;border:1px solid rgba(128,228,244,.2);background:rgba(3,9,14,.45)}
+.checkout-email-form label {display:block;margin-bottom:8px;color:#9aabb7;font-size:9px;letter-spacing:.08em}
+.checkout-email-form input {width:100%;height:42px;padding:0 12px;border:1px solid rgba(164,190,216,.2);border-radius:0;background:#080e14;color:#edf8fc;font:inherit;font-size:11px;outline:none}
+.checkout-email-form input:focus {border-color:var(--cyan);box-shadow:0 0 0 2px rgba(128,228,244,.1)}
+.checkout-email-form .download-button {margin-top:12px}
+.checkout-error {color:#ff9b91;font-size:9px;line-height:1.5}
+.checkout-cancel {display:block;margin:10px auto 0;border:0;background:none;color:#81929f;font-size:9px;cursor:pointer}
+.checkout-spinner {animation:checkout-spin 1s linear infinite}
+@keyframes checkout-spin {to{transform:rotate(360deg)}}
+.pricing-subscription-options {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto}
+.pricing-subscription-options>div {display:flex;flex-direction:column;gap:7px;padding:14px;border:1px solid rgba(128,228,244,.18);background:rgba(3,10,15,.42)}
+.pricing-subscription-options strong {color:#e5f7fb;font-size:12px;font-weight:500;line-height:1.4}
+.pricing-subscription-options span {color:#8195a2;font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+.pricing-subscription-options .button {margin-top:7px;min-height:39px;padding-inline:9px;font-size:9px}
+.pricing-config-note {margin:12px 0 0;color:#a89570;font-size:9px;line-height:1.7}
+.pricing-footnote {display:flex;align-items:flex-start;gap:9px;max-width:780px;margin:25px auto 0;color:#8193a0;font-size:9px;line-height:1.8}
+.pricing-footnote svg {flex:0 0 auto;color:var(--cyan);margin-top:1px}
+.purchase-success-page {min-height:65vh;display:grid;place-items:center;padding:65px 0}
+.purchase-success-card {width:min(680px,calc(100% - 48px));padding:48px 36px;text-align:center;border:1px solid rgba(128,228,244,.2);background:radial-gradient(ellipse at 50% 0%,rgba(53,191,217,.1),transparent 65%),#0b1118}
+.purchase-success-icon {display:grid;place-items:center;width:68px;height:68px;margin:0 auto 25px;border:1px solid rgba(128,228,244,.3);border-radius:50%;color:var(--cyan)}
+.purchase-success-card h1 {margin:22px 0;font-size:clamp(38px,6vw,58px);line-height:1;letter-spacing:-.06em;font-weight:500}
+.purchase-success-card h1 span {color:#91a4b2;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:400}
+.purchase-success-card>p {max-width:490px;margin:0 auto;color:#91a1ad;font-size:11px;line-height:1.9}
+.purchase-success-status {display:flex;justify-content:center;align-items:center;gap:8px;margin:24px 0;color:#8fd9cc;font-size:9px}
+.purchase-success-card>.button {min-height:46px;margin:0 auto}
+.purchase-success-card>small {display:block;margin-top:20px;color:#7f909c;font-size:9px;line-height:1.8}
+.purchase-success-card>small a {color:var(--cyan)}
+@media(max-width:850px) {.pricing-grid {grid-template-columns:1fr}.pricing-card {min-height:0}.pricing-subscription-options {margin-top:20px}}
+@media(max-width:600px) {
+ .pricing-hero-note {padding:22px}
+ .pricing-card {padding:21px}
+ .pricing-subscription-options {grid-template-columns:1fr}
+ .purchase-success-card {padding:35px 21px}
+ .purchase-success-status {font-size:8px;line-height:1.6}
+}
