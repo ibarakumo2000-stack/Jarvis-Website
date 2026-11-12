@@ -99,8 +99,12 @@ Payment initialization and verification run on the server. A successful callback
 
 1. Create a Supabase project and run `database/jarvis-commerce.sql` in its SQL editor.
 2. Add the server-only variables from `.env.example` to Vercel. Never use a `NEXT_PUBLIC_` prefix for payment secrets, Supabase service-role credentials, R2 credentials or the download signing secret.
-3. Create one-time and recurring products in Paystack. Copy the monthly and yearly plan codes into the matching environment variables. Set the one-time price in kobo and set display labels to match the actual Paystack prices.
-4. Configure the Paystack webhook URL as `https://YOUR_DOMAIN/api/paystack/webhook`. Keep the webhook signing secret in `PAYSTACK_WEBHOOK_SECRET`.
+3. The current fixed prices are **NGN 1,000 once** for JARVIS 56.0.0, **NGN 1,500 monthly** for JARVIS Premium, and **NGN 2,000 annually** for JARVIS Premium. Create the monthly and annual Paystack plans at exactly those amounts (150000 and 200000 kobo respectively), then set their plan codes in Vercel. The checkout endpoint checks each plan's amount, interval and currency against the website price before initializing payment. Update the pricing constants in `src/lib/payments.ts` and the Paystack plans together whenever prices change.
+4. Configure the merchant settlement destination in Paystack Dashboard under **Settings → Accounts**. Confirm the displayed beneficiary name and account before saving. The payout account details are deliberately not committed to source control, placed in public website code, or stored in `.env`. Paystack controls settlements to the configured payout account; the website does not initiate a transfer to a personal account.
+5. Configure the Paystack webhook URL as `https://YOUR_DOMAIN/api/paystack/webhook`. Keep the webhook signing secret in `PAYSTACK_WEBHOOK_SECRET`.
+6. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
+7. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
+5. Configure the Paystack webhook URL as `https://YOUR_DOMAIN/api/paystack/webhook`. Keep the webhook signing secret in `PAYSTACK_WEBHOOK_SECRET`.
 5. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
 6. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
 
