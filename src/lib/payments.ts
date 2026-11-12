@@ -220,22 +220,6 @@ export function verifyLegacyWebhookSignature(rawBody: string, signature: string)
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-export function verifyTimestampedWebhookSignature(rawBody: string, header: string): boolean {
-  const secret = process.env.PAYSTACK_WEBHOOK_SECRET;
-  if (!secret || !header) return false;
-  const parts = header.split(",").map((part) => part.trim());
-  const timestamp = parts.find((part) => part.startsWith("t="))?.slice(2);
-  if (!timestamp || !/^\d+$/.test(timestamp)) return false;
-  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
-  const signatures = parts.filter((part) => part.startsWith("v1=")).map((part) => part.slice(3).split(":").pop() ?? "");
-  const expected = createHmac("sha512", secret).update(`${timestamp}.${rawBody}`).digest("hex");
-  return signatures.some((signature) => {
-    const a = Buffer.from(expected, "hex");
-    const b = Buffer.from(signature, "hex");
-    return a.length === b.length && timingSafeEqual(a, b);
-  });
-}
-
 export function subscriptionExpiry(plan: "monthly" | "yearly", nextPaymentDate?: string | null) {
   if (nextPaymentDate && Number.isFinite(Date.parse(nextPaymentDate))) return new Date(nextPaymentDate).toISOString();
   const fallback = Date.now() + (plan === "monthly" ? 35 : 370) * 24 * 60 * 60 * 1000;
