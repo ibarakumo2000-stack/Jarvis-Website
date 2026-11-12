@@ -7,6 +7,8 @@ import { CheckCircle2, Download, ShieldCheck } from "lucide-react";
 export default function PurchaseSuccessPage() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      // This is a real browser navigation so the endpoint can return a file redirect.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign("/api/download");
     }, 1100);
     return () => window.clearTimeout(timer);
