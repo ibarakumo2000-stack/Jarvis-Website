@@ -269,3 +269,65 @@ export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRele
     return null;
   }
 }
+
+
+/**
+ * Resolve the exact classic release reserved for one-time licence holders.
+ * Accepts both GitHub tag spellings used by the project, but never falls back
+ * to the latest release (which may contain subscription-only features).
+ */
+export async function getDesktopReleaseByTag(version: "56.0.0"): Promise<LatestDesktopRelease | null> {
+  for (const tag of [`v${version}`, version]) {
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/ibarakumo2000-stack/Mark-56/releases/tags/${tag}`,
+        {
+          headers: { Accept: "application/vnd.github+json", "User-Agent": "JARVIS-Website" },
+          next: { revalidate: 120 },
+          signal: AbortSignal.timeout(6000),
+        },
+      );
+      if (!response.ok) continue;
+      const release = await response.json() as {
+        tag_name?: unknown; html_url?: unknown; published_at?: unknown;
+        draft?: unknown; prerelease?: unknown; assets?: unknown;
+      };
+      if (release.draft || release.prerelease || release.tag_name !== tag) continue;
+      const assetsRaw = Array.isArray(release.assets) ? release.assets : [];
+      const assets: InstallerAsset[] = assetsRaw.flatMap((candidate) => {
+        if (!candidate || typeof candidate !== "object") return [];
+        const asset = candidate as { name?: unknown; browser_download_url?: unknown; size?: unknown };
+        if (typeof asset.name !== "string" || typeof asset.browser_download_url !== "string" ||
+            !asset.browser_download_url.startsWith(OFFICIAL_DOWNLOAD_PREFIX)) return [];
+        return [{
+          name: asset.name,
+          url: asset.browser_download_url,
+          ...(typeof asset.size === "number" ? { size: asset.size } : {}),
+        }];
+      });
+      const macosPackages = assets.filter((asset) =>
+        /(?:macos|darwin)/i.test(asset.name) && /\.(dmg|pkg)$/i.test(asset.name));
+      const macosVariants: LatestDesktopRelease["macosVariants"] = {
+        arm64: macosPackages.find((asset) => /(?:arm64|aarch64|apple[-_ ]?silicon)/i.test(asset.name)),
+        x86_64: macosPackages.find((asset) => /(?:x86_64|intel|x64)/i.test(asset.name)),
+      };
+      return {
+        tag_name: tag,
+        html_url: typeof release.html_url === "string" &&
+          release.html_url.startsWith("https://github.com/ibarakumo2000-stack/Mark-56/releases/")
+          ? release.html_url : "https://github.com/ibarakumo2000-stack/Mark-56/releases",
+        ...(typeof release.published_at === "string" ? { published_at: release.published_at } : {}),
+        checksums: assets.find((asset) => /^(sha256sums|checksums)\.txt$/i.test(asset.name)),
+        macosVariants,
+        assets: {
+          windows: preferredAsset(assets, "windows"),
+          linux: preferredAsset(assets, "linux"),
+          macos: preferredAsset(assets, "macos"),
+        },
+      };
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
