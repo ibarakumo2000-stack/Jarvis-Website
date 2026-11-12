@@ -59,8 +59,10 @@ export async function POST(request: NextRequest) {
       callback_url: callbackUrl,
       metadata: { product: "JARVIS Desktop", plan, product_version: config.productVersion, reference },
     };
-    if (plan === "lifetime") payload.amount = config.amount;
-    else payload.plan = config.planCode;
+    // Paystack plan pricing is authoritative, but include the validated amount
+    // as documented for transaction initialization with a subscription plan.
+    payload.amount = config.amount;
+    if (plan !== "lifetime") payload.plan = config.planCode;
 
     const initialized = await paystackRequest<InitializeResponse>("/transaction/initialize", {
       method: "POST",
