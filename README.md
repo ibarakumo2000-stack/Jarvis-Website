@@ -83,3 +83,29 @@ The desktop updater must be implemented and tested in the application, not the w
 ## Project status
 
 The multi-page website, responsive navigation, animation system, download-asset discovery, offline setup explanation, platform cards, help pages, SEO metadata, custom 404 page and CI checks are implemented in this repository. This does not mean desktop installers or secure automatic app installation have already shipped.
+
+
+## Paid licences and secure downloads
+
+The commerce implementation provides three checkout choices:
+
+- **JARVIS 56.0.0 lifetime licence:** a one-time purchase pinned to the exact classic release. It must never fall back to the latest release.
+- **JARVIS Premium monthly:** a recurring Paystack plan granting access to the current premium release while active.
+- **JARVIS Premium yearly:** a recurring Paystack plan granting access to the current premium release while active.
+
+Payment initialization and verification run on the server. A successful callback is not trusted by itself: the website verifies the Paystack transaction, checks the email, currency and one-time amount, records an entitlement, then issues a short-lived HTTP-only download authorization cookie. Recurring subscription webhooks update entitlement status. The download endpoint checks the entitlement again and issues a 60-second signed URL.
+
+### Required setup before enabling checkout
+
+1. Create a Supabase project and run `database/jarvis-commerce.sql` in its SQL editor.
+2. Add the server-only variables from `.env.example` to Vercel. Never use a `NEXT_PUBLIC_` prefix for payment secrets, Supabase service-role credentials, R2 credentials or the download signing secret.
+3. Create one-time and recurring products in Paystack. Copy the monthly and yearly plan codes into the matching environment variables. Set the one-time price in kobo and set display labels to match the actual Paystack prices.
+4. Configure the Paystack webhook URL as `https://YOUR_DOMAIN/api/paystack/webhook`. Keep the webhook signing secret in `PAYSTACK_WEBHOOK_SECRET`.
+5. Create a **private** Cloudflare R2 bucket. Upload separate classic 56.0.0 and premium desktop installers and set each object key in the matching `JARVIS_*_OBJECT_KEY` variable.
+6. Test successful, failed, cancelled and recurring payments with Paystack test keys before switching to live keys.
+
+### Important release-publishing requirement
+
+Desktop installers must not remain attached to public GitHub Releases once the paid store goes live. Public GitHub release assets can be downloaded directly and cannot be protected by a website paywall. The release pipeline must upload desktop binaries to the private R2 bucket instead. GitHub Releases may continue to publish public release notes and non-sensitive checksums, but must not expose paid installer binaries. Android companion distribution remains separate.
+
+The desktop application also needs its own licence activation and feature-entitlement checks if premium functionality is to be disabled after a subscription expires. A website download entitlement alone cannot prevent a previously downloaded installer from being copied or used offline.
