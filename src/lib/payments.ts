@@ -87,7 +87,7 @@ export function getPricingCatalog() {
 export async function createPendingPurchase(row: PurchaseRow) {
   await databaseRequest(TABLE_PURCHASES + "?on_conflict=reference", {
     method: "POST",
-    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
     body: JSON.stringify(row),
   });
 }
