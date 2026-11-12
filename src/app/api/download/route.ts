@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const entitlement = await getEntitlement(claims.email);
-    if (!entitlementIsActive(entitlement)) {
+    if (!entitlement || !entitlementIsActive(entitlement)) {
       return NextResponse.redirect(new URL("/pricing?purchase=inactive", request.url), 307);
     }
     const platform = detectPlatform(request);
