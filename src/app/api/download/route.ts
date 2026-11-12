@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  entitlementIsActive,
-  getEntitlement,
-  readDownloadToken,
-} from "@/lib/payments";
-import {
-  getAndroidCompanionRelease,
-  getDesktopReleaseByTag,
-  getLatestDesktopRelease,
-  type DesktopPlatform,
-} from "@/lib/releases";
+import { entitlementIsActive, getEntitlement, readDownloadToken } from "@/lib/payments";
+import { getPrivateInstallerUrl } from "@/lib/private-downloads";
+import { getAndroidCompanionRelease, type DesktopPlatform } from "@/lib/releases";
 
 export const runtime = "nodejs";
 
@@ -46,25 +38,21 @@ export async function GET(request: NextRequest) {
     if (!entitlementIsActive(entitlement)) {
       return NextResponse.redirect(new URL("/pricing?purchase=inactive", request.url), 307);
     }
-
     const platform = detectPlatform(request);
     if (!platform) return downloadsFallback(request, "platform-unknown");
 
-    const release = entitlement.plan === "lifetime"
-      ? await getDesktopReleaseByTag("56.0.0")
-      : await getLatestDesktopRelease();
     const architecture = request.nextUrl.searchParams.get("arch")?.toLowerCase();
-    const asset = platform === "macos"
-      ? architecture === "arm64" || architecture === "x86_64"
-        ? release?.macosVariants[architecture]
-        : release?.assets.macos
-      : release?.assets[platform];
-
-    if (!asset?.url) return downloadsFallback(request, entitlement.plan === "lifetime" ? "classic-release-not-published" : "not-ready");
-    const response = NextResponse.redirect(asset.url, 302);
+    const signedUrl = await getPrivateInstallerUrl(entitlement.plan, platform, architecture);
+    if (!signedUrl) {
+      return downloadsFallback(request, platform === "macos" && !architecture ? "choose-macos-architecture" : "private-installer-not-published");
+    }
+    const response = NextResponse.redirect(signedUrl, 302);
     response.cookies.set("jarvis_download_token", "", {
-      httpOnly: true, secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", path: "/api/download", maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/api/download",
+      maxAge: 0,
     });
     return response;
   } catch (error) {
