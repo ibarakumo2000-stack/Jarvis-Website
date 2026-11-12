@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/pricing?payment=review", request.url));
     }
 
-    if (purchase.plan === "lifetime" && payment.amount !== purchase.amount) {
+    if (payment.amount !== purchase.amount) {
       await updatePurchase(reference, { status: "review" });
       return NextResponse.redirect(new URL("/pricing?payment=review", request.url));
     }
