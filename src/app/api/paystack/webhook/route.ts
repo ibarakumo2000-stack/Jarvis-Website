@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
             payment.reference === purchase.reference &&
             payment.customer?.email?.toLowerCase() === purchase.email.toLowerCase() &&
             payment.currency === purchase.currency &&
-            (purchase.plan !== "lifetime" || payment.amount === purchase.amount)) {
+            payment.amount === purchase.amount) {
           const plan = purchase.plan as PurchasePlan;
           await grantEntitlement({
             email: purchase.email,
