@@ -54,3 +54,19 @@ export async function getPrivateInstallerUrl(
     return null;
   }
 }
+
+export async function privateInstallerExists(
+  plan: PurchasePlan,
+  platform: DesktopPlatform,
+  architecture?: string,
+): Promise<boolean> {
+  const bucket = process.env.R2_BUCKET_NAME?.trim();
+  const key = objectKey(plan, platform, architecture);
+  if (!bucket || !key) return false;
+  try {
+    await getClient().send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+    return true;
+  } catch {
+    return false;
+  }
+}
