@@ -117,7 +117,7 @@ export async function getEntitlement(email: string): Promise<EntitlementRow | nu
 export async function grantEntitlement(values: EntitlementRow) {
   await databaseRequest(TABLE_ENTITLEMENTS + "?on_conflict=email", {
     method: "POST",
-    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
     body: JSON.stringify({ ...values, email: values.email.toLowerCase() }),
   });
 }
