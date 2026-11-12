@@ -9,7 +9,7 @@ const navigation = [
   { href: "/", label: "Overview" },
   { href: "/features", label: "Capabilities" },
   { href: "/offline", label: "Offline AI" },
-  { href: "/downloads", label: "Downloads" },
+  { href: "/pricing", label: "Pricing" },\n  { href: "/downloads", label: "Downloads" },
   { href: "/updates", label: "Updates" },
   { href: "/faq", label: "Help & FAQ" },
 ];
@@ -52,12 +52,12 @@ export default function SiteHeader() {
               </Link>
             );
           })}
-          <Link className="mobile-download-link" href="/downloads" onClick={closeMenu}>
-            Get JARVIS <Download size={15} />
+          <Link className="mobile-download-link" href="/pricing" onClick={closeMenu}>
+            Choose a licence <Download size={15} />
           </Link>
         </nav>
 
-        <Link className="header-cta" href="/downloads">
+        <Link className="header-cta" href="/pricing">
           Get JARVIS <Download size={15} />
         </Link>
 
