@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (plan !== "lifetime") {
-      const validPlan = await validatePaystackPlan(config.planCode, config.amount, config.interval);
+      const validPlan = await validatePaystackPlan(config.planCode, config.amount, plan === "monthly" ? "monthly" : "annually");
       if (!validPlan) {
         return NextResponse.json({ error: "The subscription price is being updated. Please try again later." }, { status: 503 });
       }
