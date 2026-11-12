@@ -80,7 +80,7 @@ export default function PricingPage() {
             </article>
           </Reveal>
         </div>
-        <p className="pricing-footnote"><ShieldCheck size={15}/> Payment is verified on the server before a download is unlocked. Subscription access can be suspended when the billing period expires or the subscription is disabled.</p>
+        <p className="pricing-footnote"><ShieldCheck size={15}/> Payment is verified on the server before a download is unlocked. Recurring subscriptions use Paystack-supported recurring payment methods (card or direct debit in Nigeria). Subscription access can be suspended when the billing period expires or the subscription is disabled.</p>
       </section>
     </main>
   );
