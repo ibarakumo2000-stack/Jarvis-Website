@@ -153,7 +153,9 @@ export function newPaymentReference() {
 type DownloadClaims = { email: string; reference: string; expiresAt: number };
 
 function tokenSecret() {
-  return requiredEnv("DOWNLOAD_TOKEN_SECRET");
+  const secret = requiredEnv("DOWNLOAD_TOKEN_SECRET");
+  if (secret.length < 32) throw new Error("DOWNLOAD_TOKEN_SECRET must contain at least 32 characters.");
+  return secret;
 }
 
 export function createDownloadToken(email: string, reference: string): string {
