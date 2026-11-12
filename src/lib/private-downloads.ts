@@ -46,7 +46,11 @@ export async function getPrivateInstallerUrl(
     await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
     return await getSignedUrl(
       s3,
-      new GetObjectCommand({ Bucket: bucket, Key: key }),
+      new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        ResponseContentDisposition: `attachment; filename="${key.split("/").pop() ?? "JARVIS-installer"}"`,
+      }),
       { expiresIn: 60 },
     );
   } catch (error) {
