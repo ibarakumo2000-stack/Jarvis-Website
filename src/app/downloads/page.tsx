@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, CheckCircle2, CircleHelp, Download, Monitor, ShieldCheck, Smartphone, Sparkles, Terminal } from "lucide-react";
 import Reveal from "@/components/reveal";
 import { getAndroidCompanionRelease, getLatestDesktopRelease, type DesktopPlatform } from "@/lib/releases";
+import { privateInstallerExists } from "@/lib/private-downloads";
 
 export const metadata: Metadata = {
   title: "Downloads",
@@ -25,7 +26,21 @@ export default async function DownloadsPage() {
     getLatestDesktopRelease(),
     getAndroidCompanionRelease(),
   ]);
-  const available = platforms.filter((platform) => release?.assets[platform.key]);
+  const availability = await Promise.all(platforms.map(async (platform) => {
+    if (platform.key === "macos") {
+      const [arm64, x86_64] = await Promise.all([
+        Promise.all([privateInstallerExists("lifetime", "macos", "arm64"), privateInstallerExists("monthly", "macos", "arm64")]).then((values) => values.some(Boolean)),
+        Promise.all([privateInstallerExists("lifetime", "macos", "x86_64"), privateInstallerExists("monthly", "macos", "x86_64")]).then((values) => values.some(Boolean)),
+      ]);
+      return { available: arm64 || x86_64, arm64, x86_64 };
+    }
+    const [classic, premium] = await Promise.all([
+      privateInstallerExists("lifetime", platform.key),
+      privateInstallerExists("monthly", platform.key),
+    ]);
+    return { available: classic || premium, arm64: false, x86_64: false };
+  }));
+  const available = platforms.filter((_, index) => availability[index].available);
   return (
     <main className="inner-page">
       <section className="page-hero section-wrap downloads-page-hero">
@@ -34,7 +49,7 @@ export default async function DownloadsPage() {
       </section>
       <section className="page-content section-wrap">
         <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> CHOOSE YOUR PLATFORM</div><h2>Built for the computer<br /><span>you actually use.</span></h2><p>Choose your operating system. If a package is not published, its status stays visible and you won&apos;t be sent to a source-code download by mistake.</p></Reveal>
-        <div className="download-platform-grid">{platforms.map((platform,index)=>{const Icon=platform.icon;const asset=release?.assets[platform.key];return <Reveal key={platform.key} delay={index*70}><article className={asset?"download-platform-card is-available":"download-platform-card"}><div className="download-platform-top"><span className="download-platform-icon"><Icon size={24} strokeWidth={1.5}/></span><span className={asset?"availability-tag available":"availability-tag"}>{asset?"AVAILABLE":"IN PREPARATION"}</span></div><h3>{platform.name}</h3><p>{platform.description}</p><div className="platform-requirements"><span>REQUIREMENTS</span><strong>{platform.requirements}</strong></div><div className="platform-requirements"><span>PACKAGE TYPE</span><strong>{platform.key === "macos" && release?.macosVariants.arm64 && release?.macosVariants.x86_64 ? "Separate DMGs for Apple silicon and Intel" : asset?.name ?? platform.packageLabel}</strong></div>{platform.key === "macos" && (release?.macosVariants.arm64 || release?.macosVariants.x86_64) ? <div className="macos-download-options">{release?.macosVariants.arm64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=arm64">Download · Apple silicon <ArrowDownToLine size={16}/></a>}{release?.macosVariants.x86_64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=x86_64">Download · Intel Mac <ArrowDownToLine size={16}/></a>}</div> : asset ? <a className="button button-primary download-button" href={`/api/download?platform=${platform.key}`}>Download for {platform.name}<ArrowDownToLine size={16}/></a> : <button type="button" className="button button-disabled download-button" disabled>Installer not published yet</button>}{asset&&<p className="asset-size">{formatBytes(asset.size)} · Official GitHub asset</p>}{release?.checksums && <a className="checksum-link" href={release.checksums.url} target="_blank" rel="noreferrer">Verify SHA-256 checksum <ArrowUpRight size={13} /></a>}</article></Reveal>})}</div>
+        <div className="download-platform-grid">{platforms.map((platform,index)=>{const Icon=platform.icon;const asset=release?.assets[platform.key];const ready=availability[index];return <Reveal key={platform.key} delay={index*70}><article className={ready.available?"download-platform-card is-available":"download-platform-card"}><div className="download-platform-top"><span className="download-platform-icon"><Icon size={24} strokeWidth={1.5}/></span><span className={asset?"availability-tag available":"availability-tag"}>{ready.available?"AVAILABLE":"IN PREPARATION"}</span></div><h3>{platform.name}</h3><p>{platform.description}</p><div className="platform-requirements"><span>REQUIREMENTS</span><strong>{platform.requirements}</strong></div><div className="platform-requirements"><span>PACKAGE TYPE</span><strong>{platform.key === "macos" && ready.arm64 && ready.x86_64 ? "Separate private DMGs for Apple silicon and Intel" : asset?.name ?? platform.packageLabel}</strong></div>{platform.key === "macos" && (ready.arm64 || ready.x86_64) ? <div className="macos-download-options">{ready.arm64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=arm64">Download · Apple silicon <ArrowDownToLine size={16}/></a>}{ready.x86_64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=x86_64">Download · Intel Mac <ArrowDownToLine size={16}/></a>}</div> : ready.available ? <a className="button button-primary download-button" href={`/api/download?platform=${platform.key}`}>Download for {platform.name}<ArrowDownToLine size={16}/></a> : <button type="button" className="button button-disabled download-button" disabled>Installer not published yet</button>}{ready.available && <p className="asset-size">Private, entitlement-checked installer</p>}{release?.checksums && <a className="checksum-link" href={release.checksums.url} target="_blank" rel="noreferrer">Verify SHA-256 checksum <ArrowUpRight size={13} /></a>}</article></Reveal>})}</div>
       </section>
       <section className="page-content section-wrap android-companion-download-section">
         <Reveal className="section-heading">
