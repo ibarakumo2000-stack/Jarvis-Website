@@ -47,13 +47,6 @@ export async function GET(request: NextRequest) {
       return downloadsFallback(request, platform === "macos" && !architecture ? "choose-macos-architecture" : "private-installer-not-published");
     }
     const response = NextResponse.redirect(signedUrl, 302);
-    response.cookies.set("jarvis_download_token", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/api/download",
-      maxAge: 0,
-    });
     return response;
   } catch (error) {
     console.error("[authorized download]", error);
