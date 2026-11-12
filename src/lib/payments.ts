@@ -62,6 +62,7 @@ export function getPlanConfiguration(plan: PurchasePlan) {
       plan,
       productVersion: "56.0.0",
       amount,
+      planCode: "",
       currency: process.env.PAYSTACK_CURRENCY ?? "NGN",
       displayPrice: process.env.JARVIS_LIFETIME_PRICE_LABEL ?? "",
       configured: Number.isSafeInteger(amount) && amount > 0,
