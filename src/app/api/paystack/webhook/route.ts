@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
           await grantEntitlement({
             email: purchase.email,
             plan,
-            product_version: plan === "lifetime" ? "56.0.0" : "latest",
+            product_version: plan === "lifetime" ? "56.0.2" : "latest",
             status: "active",
             expires_at:
               plan === "lifetime"

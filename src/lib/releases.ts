@@ -272,11 +272,11 @@ export async function getAndroidCompanionRelease(): Promise<AndroidCompanionRele
 
 
 /**
- * Resolve the exact classic release reserved for one-time licence holders.
+ * Resolve the exact Mark 56.0.2 release reserved for one-time licence holders.
  * Accepts both GitHub tag spellings used by the project, but never falls back
  * to the latest release (which may contain subscription-only features).
  */
-export async function getDesktopReleaseByTag(version: "56.0.0"): Promise<LatestDesktopRelease | null> {
+export async function getDesktopReleaseByTag(version: "56.0.2"): Promise<LatestDesktopRelease | null> {
   for (const tag of [`v${version}`, version]) {
     try {
       const response = await fetch(

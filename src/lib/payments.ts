@@ -22,6 +22,25 @@ const PAYSTACK_API = "https://api.paystack.co";
 const TABLE_PURCHASES = "jarvis_purchases";
 const TABLE_ENTITLEMENTS = "jarvis_entitlements";
 
+function commerceBackendConfigured(): boolean {
+  return Boolean(
+    process.env.PAYSTACK_SECRET_KEY?.trim() &&
+    process.env.SUPABASE_URL?.trim() &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() &&
+    (process.env.DOWNLOAD_TOKEN_SECRET?.trim().length ?? 0) >= 32 &&
+    process.env.R2_ACCOUNT_ID?.trim() &&
+    process.env.R2_ACCESS_KEY_ID?.trim() &&
+    process.env.R2_SECRET_ACCESS_KEY?.trim() &&
+    process.env.R2_BUCKET_NAME?.trim()
+  );
+}
+
+function privateInstallerKeyConfigured(tier: "CLASSIC" | "PREMIUM"): boolean {
+  return ["WINDOWS", "LINUX", "MACOS_ARM64", "MACOS_X86_64"].some(
+    (platform) => process.env[`JARVIS_${tier}_${platform}_OBJECT_KEY`]?.trim(),
+  );
+}
+
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`Missing server environment variable: ${name}`);
@@ -56,7 +75,7 @@ async function databaseRequest<T>(path: string, init: RequestInit = {}): Promise
 }
 
 const PRICING = {
-  lifetime: { amount: 100_000, displayPrice: "₦1,000", productVersion: "56.0.0" },
+  lifetime: { amount: 100_000, displayPrice: "₦1,000", productVersion: "56.0.2" },
   monthly: { amount: 150_000, displayPrice: "₦1,500", productVersion: "latest" },
   yearly: { amount: 200_000, displayPrice: "₦2,000", productVersion: "latest" },
 } as const;
@@ -71,7 +90,7 @@ export function getPlanConfiguration(plan: PurchasePlan) {
       planCode: "",
       currency: "NGN",
       displayPrice: fixed.displayPrice,
-      configured: true,
+      configured: commerceBackendConfigured() && privateInstallerKeyConfigured("CLASSIC"),
     };
   }
   const code = process.env[plan === "monthly" ? "PAYSTACK_MONTHLY_PLAN_CODE" : "PAYSTACK_YEARLY_PLAN_CODE"]?.trim() ?? "";
@@ -83,7 +102,7 @@ export function getPlanConfiguration(plan: PurchasePlan) {
     planCode: code,
     interval: plan === "monthly" ? "monthly" as const : "annually" as const,
     displayPrice: fixed.displayPrice,
-    configured: Boolean(code),
+    configured: Boolean(code) && commerceBackendConfigured() && privateInstallerKeyConfigured("PREMIUM"),
   };
 }
 
