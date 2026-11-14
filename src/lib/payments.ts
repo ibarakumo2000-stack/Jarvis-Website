@@ -35,6 +35,12 @@ function commerceBackendConfigured(): boolean {
   );
 }
 
+function privateInstallerKeyConfigured(tier: "CLASSIC" | "PREMIUM"): boolean {
+  return ["WINDOWS", "LINUX", "MACOS_ARM64", "MACOS_X86_64"].some(
+    (platform) => process.env[`JARVIS_${tier}_${platform}_OBJECT_KEY`]?.trim(),
+  );
+}
+
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`Missing server environment variable: ${name}`);
@@ -84,7 +90,7 @@ export function getPlanConfiguration(plan: PurchasePlan) {
       planCode: "",
       currency: "NGN",
       displayPrice: fixed.displayPrice,
-      configured: commerceBackendConfigured(),
+      configured: commerceBackendConfigured() && privateInstallerKeyConfigured("CLASSIC"),
     };
   }
   const code = process.env[plan === "monthly" ? "PAYSTACK_MONTHLY_PLAN_CODE" : "PAYSTACK_YEARLY_PLAN_CODE"]?.trim() ?? "";
@@ -96,7 +102,7 @@ export function getPlanConfiguration(plan: PurchasePlan) {
     planCode: code,
     interval: plan === "monthly" ? "monthly" as const : "annually" as const,
     displayPrice: fixed.displayPrice,
-    configured: Boolean(code) && commerceBackendConfigured(),
+    configured: Boolean(code) && commerceBackendConfigured() && privateInstallerKeyConfigured("PREMIUM"),
   };
 }
 
