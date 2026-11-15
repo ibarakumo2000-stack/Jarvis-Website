@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, AudioLines, Check, CloudOff, Cpu, Download, LockKeyhole, ShieldCheck, Sparkles, Workflow } from "lucide-react";
+import { ArrowRight, ArrowUpRight, AudioLines, Check, CloudOff, Cpu, LockKeyhole, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Reveal from "@/components/reveal";
 import InteractiveCore from "@/components/interactive-core";
-import { getLatestDesktopRelease } from "@/lib/releases";
 
-export default async function Home() {
-  const release = await getLatestDesktopRelease();
-  const availableCount = Object.values(release?.assets ?? {}).filter(Boolean).length;
+export default function Home() {
   return (
     <main>
       <section className="hero section-wrap home-hero" id="top">
@@ -14,7 +11,7 @@ export default async function Home() {
           <div className="eyebrow-pill"><span className="pill-spark">✳</span> A DESKTOP AI, BUILT AROUND YOU</div>
           <h1>Intelligence.<br /><span>At your</span> command<span className="title-period">.</span></h1>
           <p className="hero-lede">A more thoughtful desktop companion. Bring local AI, useful automation, and a natural voice-and-chat experience into one focused workspace.</p>
-          <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore JARVIS <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/features">Discover capabilities <ArrowUpRight size={15} /></Link></div>
+          <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore JARVIS skills <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/features">Discover capabilities <ArrowUpRight size={15} /></Link></div>
           <div className="hero-actions hero-download-actions" aria-label="Choose a JARVIS licence"><Link className="button button-primary" href="/pricing">Choose your JARVIS licence <ArrowRight size={16} /></Link></div>
           <div className="hero-trust-row"><span><LockKeyhole size={14} /> Local-first direction</span><span><ShieldCheck size={14} /> You stay in control</span></div>
         </div>
@@ -33,7 +30,7 @@ export default async function Home() {
         <div className="home-feature-grid">
           <Reveal delay={30}><Link className="home-feature-card" href="/features"><span className="home-feature-icon"><Sparkles size={21} /></span><span className="home-feature-kicker">01 / CAPABILITIES</span><h3>Built for useful work</h3><p>Discover voice, automation, coding, and assistant workflows being built into JARVIS.</p><span className="home-card-link">Explore capabilities <ArrowUpRight size={15} /></span></Link></Reveal>
           <Reveal delay={100}><Link className="home-feature-card" href="/offline"><span className="home-feature-icon"><Cpu size={21} /></span><span className="home-feature-kicker">02 / OFFLINE AI</span><h3>Your machine. Your model.</h3><p>Understand setup, Ollama, model downloads, offline-ready checks, and what still needs internet.</p><span className="home-card-link">Prepare offline AI <ArrowUpRight size={15} /></span></Link></Reveal>
-          <Reveal delay={170}><Link className="home-feature-card" href="/downloads"><span className="home-feature-icon"><Download size={21} /></span><span className="home-feature-kicker">03 / RELEASE CENTER</span><h3>Get JARVIS on desktop</h3><p>{availableCount ? `Verified installer packages are available for ${availableCount} platform(s).` : "Check the current release status and download an installer when a verified package is published."}</p><span className="home-card-link">View downloads <ArrowUpRight size={15} /></span></Link></Reveal>
+          <Reveal delay={170}><Link className="home-feature-card" href="/downloads"><span className="home-feature-icon"><Workflow size={21} /></span><span className="home-feature-kicker">03 / THE JARVIS TOOLKIT</span><h3>More ways to get things done</h3><p>Explore screen awareness, desktop workflows, coding tools, plugins and companion-device features.</p><span className="home-card-link">Explore JARVIS skills <ArrowUpRight size={15} /></span></Link></Reveal>
         </div>
       </section>
 
@@ -42,7 +39,7 @@ export default async function Home() {
         <Reveal className="offline-panel" delay={120}><div className="panel-header"><span><span className="signal-dot" /> LOCAL RUNTIME</span><span>SETUP GUIDE</span></div><div className="panel-main"><div className="chip-visual"><Cpu size={28} strokeWidth={1.2} /><span className="chip-glow" /></div><div className="panel-main-copy"><span>ON-DEVICE INFERENCE</span><strong>Ollama + local model</strong><small>Runs on your computer after setup</small></div></div><div className="panel-rule" /><div className="panel-row"><span><Check size={15} /> Local prompts and responses</span><span className="panel-ok">OFFLINE</span></div><div className="panel-row"><span><Check size={15} /> Supported local workflows</span><span className="panel-ok">OFFLINE</span></div><div className="panel-row"><span><CloudOff size={15} /> Web search and cloud services</span><span className="panel-network">ONLINE</span></div><div className="panel-footnote"><LockKeyhole size={14} /> Initial setup and model downloads need a connection.</div></Reveal>
       </div></section>
 
-      <section className="home-final section-wrap"><Reveal className="home-final-copy"><div className="section-eyebrow"><span className="eyebrow-mark" /> READY WHEN YOU ARE</div><h2>Find your next step.<br /><span>We&apos;ll make it clear.</span></h2><p>Start with the overview, prepare local AI, or go straight to the release center.</p><div className="hero-actions"><Link className="button button-primary" href="/downloads">Get JARVIS <Download size={16} /></Link><Link className="button button-quiet" href="/faq">Visit the help center <ArrowUpRight size={15} /></Link></div></Reveal><div className="home-final-mark" aria-hidden="true"><span>J</span><div /></div></section>
+      <section className="home-final section-wrap"><Reveal className="home-final-copy"><div className="section-eyebrow"><span className="eyebrow-mark" /> READY WHEN YOU ARE</div><h2>Find your next step.<br /><span>We&apos;ll make it clear.</span></h2><p>Explore what JARVIS can do, prepare local AI, then choose the licence that fits your workflow.</p><div className="hero-actions"><Link className="button button-primary" href="/pricing">Choose your licence <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/faq">Visit the help center <ArrowUpRight size={15} /></Link></div></Reveal><div className="home-final-mark" aria-hidden="true"><span>J</span><div /></div></section>
     </main>
   );
 }

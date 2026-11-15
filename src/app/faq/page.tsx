@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Download, LifeBuoy, ShieldCheck, WifiOff } from "lucide-react";
+import { ArrowRight, ArrowUpRight, LifeBuoy, Sparkles, ShieldCheck, WifiOff } from "lucide-react";
 import Reveal from "@/components/reveal";
 
 export const metadata: Metadata = {
@@ -30,8 +30,8 @@ export default function FAQPage() {
   return (
     <main className="inner-page">
       <section className="page-hero section-wrap faq-page-hero">
-        <Reveal><div className="eyebrow-pill"><span className="pill-spark">✳</span> HELP CENTER / YOUR QUESTIONS</div><h1>Clear answers.<br/><span>Fewer roadblocks.</span></h1><p className="page-lede">Practical guidance for installation, local models, updates, and what to expect from each platform.</p><div className="hero-actions"><Link className="button button-primary" href="/downloads">Visit downloads <Download size={15}/></Link><Link className="button button-quiet" href="/offline">Offline setup guide <ArrowRight size={15}/></Link></div></Reveal>
-        <Reveal className="help-quick-links" delay={100}><span className="footer-label">POPULAR TOPICS</span><Link href="/downloads"><Download size={16}/> Installing JARVIS <ArrowUpRight size={14}/></Link><Link href="/offline"><WifiOff size={16}/> Running offline <ArrowUpRight size={14}/></Link><Link href="/updates"><ShieldCheck size={16}/> Update behavior <ArrowUpRight size={14}/></Link></Reveal>
+        <Reveal><div className="eyebrow-pill"><span className="pill-spark">✳</span> HELP CENTER / YOUR QUESTIONS</div><h1>Clear answers.<br/><span>Fewer roadblocks.</span></h1><p className="page-lede">Practical guidance for installation, local models, updates, and what to expect from each platform.</p><div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore skills <Sparkles size={15}/></Link><Link className="button button-quiet" href="/offline">Offline setup guide <ArrowRight size={15}/></Link></div></Reveal>
+        <Reveal className="help-quick-links" delay={100}><span className="footer-label">POPULAR TOPICS</span><Link href="/downloads"><Sparkles size={16}/> JARVIS capabilities <ArrowUpRight size={14}/></Link><Link href="/offline"><WifiOff size={16}/> Running offline <ArrowUpRight size={14}/></Link><Link href="/updates"><ShieldCheck size={16}/> Update behavior <ArrowUpRight size={14}/></Link></Reveal>
       </section>
       <section className="page-content section-wrap faq-main">
         {sections.map((section, sectionIndex)=><section className="faq-category" key={section.title} aria-labelledby={`faq-${sectionIndex}`}><Reveal className="faq-category-heading"><span className="section-eyebrow"><span className="eyebrow-mark"/> 0{sectionIndex+1} / HELP TOPIC</span><h2 id={`faq-${sectionIndex}`}>{section.title}</h2></Reveal><div className="faq-list faq-list-page">{section.questions.map((item,index)=><Reveal key={item.q} delay={index*35}><details className="faq-item"><summary><span>{item.q}</span><span className="faq-plus">+</span></summary><p>{item.a}</p></details></Reveal>)}</div></section>)}

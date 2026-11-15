@@ -25,7 +25,7 @@ export default function FeaturesPage() {
           <div className="eyebrow-pill"><span className="pill-spark">✳</span> CAPABILITIES / THE SYSTEM</div>
           <h1>Designed for more<br /><span>than conversation.</span></h1>
           <p className="page-lede">JARVIS brings local intelligence and useful desktop tools into one workspace—with clear boundaries around what is ready, what is evolving, and what needs a connection.</p>
-          <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore downloads <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/offline">How offline AI works <ArrowUpRight size={15} /></Link></div>
+          <div className="hero-actions"><Link className="button button-primary" href="/downloads">Explore JARVIS skills <ArrowRight size={16} /></Link><Link className="button button-quiet" href="/offline">How offline AI works <ArrowUpRight size={15} /></Link></div>
         </Reveal>
         <Reveal className="page-stat-grid" delay={100}>
           <div><strong>LOCAL</strong><span>Where supported</span></div><div><strong>MODULAR</strong><span>Capabilities can evolve</span></div><div><strong>YOU FIRST</strong><span>Control stays visible</span></div>
@@ -41,8 +41,8 @@ export default function FeaturesPage() {
         </div>
       </section>
       <section className="page-cta-band section-wrap">
-        <div className="cta-band-orbit" aria-hidden="true"><span>J</span></div><div><div className="section-eyebrow"><span className="eyebrow-mark" /> WHERE TO NEXT</div><h2>Start with your setup.</h2><p>Get clear instructions for local AI, then check the release center for desktop packages.</p></div>
-        <div className="page-cta-actions"><Link className="button button-primary" href="/offline">Prepare offline AI <ArrowRight size={15} /></Link><Link className="text-link" href="/downloads">Open downloads <ArrowUpRight size={15} /></Link></div>
+        <div className="cta-band-orbit" aria-hidden="true"><span>J</span></div><div><div className="section-eyebrow"><span className="eyebrow-mark" /> WHERE TO NEXT</div><h2>Start with your setup.</h2><p>Explore the JARVIS toolkit, prepare local AI, and compare the licence options.</p></div>
+        <div className="page-cta-actions"><Link className="button button-primary" href="/pricing">Compare plans <ArrowRight size={15} /></Link><Link className="text-link" href="/downloads">Explore skills <ArrowUpRight size={15} /></Link></div>
       </section>
     </main>
   );
