@@ -72,7 +72,7 @@ export default function PricingPage() {
               <p className="pricing-description">A permanent licence for the classic JARVIS desktop release.</p>
               <div className="pricing-price">{lifetime.displayPrice || "₦1,000"}<small>one-time payment</small></div>
               <div className="pricing-card-divider"/>
-              <p className="pricing-includes-label">WHAT'S INCLUDED</p>
+              <p className="pricing-includes-label">WHAT&apos;S INCLUDED</p>
               <ul>{classicFeatures.map((feature) => <li key={feature}><Check size={15}/>{feature}</li>)}</ul>
               <PaymentComingSoon/>
               <span className="pricing-plan-foot">No subscription. No recurring charges.</span>
