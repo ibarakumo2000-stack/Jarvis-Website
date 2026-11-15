@@ -1,122 +1,232 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, CheckCircle2, CircleHelp, Download, Monitor, ShieldCheck, Smartphone, Sparkles, Terminal } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  AudioLines,
+  BrainCircuit,
+  Code2,
+  Eye,
+  Gauge,
+  Layers3,
+  LockKeyhole,
+  Network,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Workflow,
+} from "lucide-react";
 import Reveal from "@/components/reveal";
-import { getAndroidCompanionRelease, getLatestDesktopRelease, type DesktopPlatform } from "@/lib/releases";
-import { privateInstallerExists } from "@/lib/private-downloads";
 
 export const metadata: Metadata = {
-  title: "Downloads",
-  description: "Download official JARVIS desktop installers and versioned signed Android companion releases.",
+  title: "JARVIS skills & capabilities",
+  description:
+    "Discover the voice, desktop, local AI, coding, automation, plugin and companion-device capabilities built into JARVIS.",
 };
 
-const platforms: { key: DesktopPlatform; name: string; description: string; requirements: string; icon: typeof Monitor; packageLabel: string }[] = [
-  { key: "windows", name: "Windows", description: "64-bit Windows desktop", requirements: "Windows 10 or later", icon: Monitor, packageLabel: ".exe / .msi" },
-  { key: "linux", name: "Ubuntu / Linux", description: "64-bit Linux desktop", requirements: "Ubuntu or compatible distro", icon: Terminal, packageLabel: ".tar.gz installer bundle" },
-  { key: "macos", name: "macOS", description: "Apple silicon or Intel, when published", requirements: "A compatible macOS release", icon: Sparkles, packageLabel: ".dmg / .pkg" },
+const skills: {
+  number: string;
+  icon: typeof AudioLines;
+  category: string;
+  title: string;
+  body: string;
+  tags: string[];
+  setup: string;
+}[] = [
+  {
+    number: "01",
+    icon: AudioLines,
+    category: "VOICE & CONVERSATION",
+    title: "Talk to your desktop.",
+    body: "Move between text and live voice conversations in one assistant workspace. Ask questions, get help with tasks and keep your flow without jumping between separate tools.",
+    tags: ["Voice + chat", "Live assistant", "Microphone controls"],
+    setup: "Voice provider and microphone permissions required",
+  },
+  {
+    number: "02",
+    icon: Eye,
+    category: "SCREEN AWARENESS",
+    title: "Give JARVIS context.",
+    body: "Use the screen agent to inspect visible content, read supported on-screen text and analyse what is happening. JARVIS can prepare a proposed action, while execution stays behind explicit confirmation.",
+    tags: ["Screen analysis", "Text reading", "Confirmed actions"],
+    setup: "Screen-capture permissions and OS support required",
+  },
+  {
+    number: "03",
+    icon: Workflow,
+    category: "DESKTOP WORKFLOWS",
+    title: "Turn repeat work into routines.",
+    body: "Bring supported desktop actions, routines and quiet-hour controls into one place. Keep an eye on running tasks and see when an operating-system permission or dependency blocks an action.",
+    tags: ["Actions", "Routines", "Task visibility"],
+    setup: "Available actions vary by platform and permissions",
+  },
+  {
+    number: "04",
+    icon: Code2,
+    category: "CODING & CREATION",
+    title: "Build ideas into projects.",
+    body: "Use the coding workspace and project tools to work through code, organise development tasks and create local starter websites with the website builder.",
+    tags: ["Coding workspace", "Project tools", "Website builder"],
+    setup: "AI provider configuration may be required",
+  },
+  {
+    number: "05",
+    icon: BrainCircuit,
+    category: "LOCAL AI",
+    title: "Keep supported AI work on your machine.",
+    body: "Connect a local model runtime such as Ollama and use supported models for on-device requests. Choose local processing where it fits, and use connected cloud services when a task needs them.",
+    tags: ["Ollama integration", "Model choice", "Offline-capable tasks"],
+    setup: "Install a compatible model; performance depends on hardware",
+  },
+  {
+    number: "06",
+    icon: Layers3,
+    category: "PLUGINS & EXTENSIONS",
+    title: "Shape JARVIS around your work.",
+    body: "Manage the modular toolset from the app: enable or disable supported plugins, add trusted local extensions and remove tools you no longer need.",
+    tags: ["Plugin manager", "Extendable tools", "Your choice"],
+    setup: "Only install plugins from sources you trust",
+  },
+  {
+    number: "07",
+    icon: Smartphone,
+    category: "PHONE & CONNECTED DEVICES",
+    title: "Take your assistant beyond the PC.",
+    body: "Pair the companion app through an authenticated QR flow, manage paired devices and use supported remote-control and notification features from your phone.",
+    tags: ["Phone pairing", "Device management", "Remote access"],
+    setup: "Companion app, local network and approved permissions required",
+  },
+  {
+    number: "08",
+    icon: Network,
+    category: "CONNECTED RESEARCH",
+    title: "Bring the wider web into your workflow.",
+    body: "Use supported web research and connected AI providers when a task benefits from current online information, while keeping local-model work separate.",
+    tags: ["Web research", "Cloud providers", "Connected tools"],
+    setup: "Internet access and any required provider credentials",
+  },
+  {
+    number: "09",
+    icon: Gauge,
+    category: "SYSTEM AWARENESS",
+    title: "See what your system is telling you.",
+    body: "Follow supported system and network signals, task activity and platform-readiness information from the command centre, so limitations are easier to understand.",
+    tags: ["System telemetry", "Network activity", "Platform awareness"],
+    setup: "Available signals depend on your operating system",
+  },
 ];
 
-function formatBytes(bytes?: number) {
-  if (!bytes || bytes <= 0) return "";
-  return bytes >= 1_000_000_000 ? `${(bytes / 1_000_000_000).toFixed(2)} GB` : `${(bytes / 1_000_000).toFixed(0)} MB`;
-}
+const principles = [
+  {
+    icon: LockKeyhole,
+    title: "Control stays with you",
+    body: "Permissions remain visible. Sensitive or consequential actions require the appropriate approval rather than silently running in the background.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Local when it makes sense",
+    body: "Supported local models can process work on your own computer. Cloud features are separate and clearly need a connection.",
+  },
+  {
+    icon: Sparkles,
+    title: "A toolkit that can grow",
+    body: "A modular plugin system lets you shape the assistant around your tools and the way you prefer to work.",
+  },
+];
 
-export default async function DownloadsPage() {
-  const [release, androidRelease] = await Promise.all([
-    getLatestDesktopRelease(),
-    getAndroidCompanionRelease(),
-  ]);
-  const availability = await Promise.all(platforms.map(async (platform) => {
-    if (platform.key === "macos") {
-      const [arm64, x86_64] = await Promise.all([
-        Promise.all([privateInstallerExists("lifetime", "macos", "arm64"), privateInstallerExists("monthly", "macos", "arm64")]).then((values) => values.some(Boolean)),
-        Promise.all([privateInstallerExists("lifetime", "macos", "x86_64"), privateInstallerExists("monthly", "macos", "x86_64")]).then((values) => values.some(Boolean)),
-      ]);
-      return { available: arm64 || x86_64, arm64, x86_64 };
-    }
-    const [classic, premium] = await Promise.all([
-      privateInstallerExists("lifetime", platform.key),
-      privateInstallerExists("monthly", platform.key),
-    ]);
-    return { available: classic || premium, arm64: false, x86_64: false };
-  }));
-  const available = platforms.filter((_, index) => availability[index].available);
+export default function DownloadsPage() {
   return (
-    <main className="inner-page">
-      <section className="page-hero section-wrap downloads-page-hero">
-        <Reveal><div className="eyebrow-pill"><span className="pill-spark">✳</span> OFFICIAL RELEASE CENTER</div><h1>Your next step<br /><span>starts here.</span></h1><p className="page-lede">One place to find the desktop installer, check platform availability, and get ready for local AI. We only enable desktop downloads when a matching private installer is available for your licence.</p><div className="download-state-pill">{available.length ? <CheckCircle2 size={15} /> : <CircleHelp size={15} />}{available.length ? `${available.length} platform package(s) available` : "Secure installer delivery is being configured"}</div></Reveal>
-        <Reveal className="download-hero-card" delay={100}><div className="panel-header"><span><span className={available.length ? "signal-dot" : "status-indicator"} /> LATEST STABLE RELEASE</span><span>{release?.tag_name ?? "RELEASE PENDING"}</span></div><div className="download-hero-icon"><Download size={30} strokeWidth={1.3} /></div><h2>{release ? `JARVIS ${release.tag_name}` : "A desktop installer is on the way."}</h2><p>{release ? "Review the packages available for your operating system below." : "The current desktop release is still in publication review. Downloads activate after the stable release is published and the matching private installer is available in secure storage."}</p>{release?.assets.windows && <Link className="button button-primary download-hero-download" href="/pricing">Choose a licence to download <ArrowDownToLine size={15} /></Link>}<span className="text-link">Desktop installers are delivered through verified licence access.</span></Reveal>
-      </section>
-      <section className="page-content section-wrap">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> CHOOSE YOUR PLATFORM</div><h2>Built for the computer<br /><span>you actually use.</span></h2><p>Choose your operating system. A build can exist before its stable release and secure licence delivery are ready. We only activate downloads after both checks pass.</p></Reveal>
-        <div className="download-platform-grid">{platforms.map((platform,index)=>{const Icon=platform.icon;const asset=release?.assets[platform.key];const ready=availability[index];return <Reveal key={platform.key} delay={index*70}><article className={ready.available?"download-platform-card is-available":"download-platform-card"}><div className="download-platform-top"><span className="download-platform-icon"><Icon size={24} strokeWidth={1.5}/></span><span className={asset?"availability-tag available":"availability-tag"}>{ready.available?"AVAILABLE":"DELIVERY PENDING"}</span></div><h3>{platform.name}</h3><p>{platform.description}</p><div className="platform-requirements"><span>REQUIREMENTS</span><strong>{platform.requirements}</strong></div><div className="platform-requirements"><span>PACKAGE TYPE</span><strong>{platform.key === "macos" && ready.arm64 && ready.x86_64 ? "Separate private DMGs for Apple silicon and Intel" : asset?.name ?? platform.packageLabel}</strong></div>{platform.key === "macos" && (ready.arm64 || ready.x86_64) ? <div className="macos-download-options">{ready.arm64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=arm64">Download · Apple silicon <ArrowDownToLine size={16}/></a>}{ready.x86_64 && <a className="button button-primary download-button" href="/api/download?platform=macos&arch=x86_64">Download · Intel Mac <ArrowDownToLine size={16}/></a>}</div> : ready.available ? <a className="button button-primary download-button" href={`/api/download?platform=${platform.key}`}>Download for {platform.name}<ArrowDownToLine size={16}/></a> : <button type="button" className="button button-disabled download-button" disabled>Secure download setup pending</button>}{ready.available && <p className="asset-size">Private, entitlement-checked installer</p>}{release?.checksums && <a className="checksum-link" href={release.checksums.url} target="_blank" rel="noreferrer">Verify SHA-256 checksum <ArrowUpRight size={13} /></a>}</article></Reveal>})}</div>
-      </section>
-      <section className="page-content section-wrap android-companion-download-section">
-        <Reveal className="section-heading">
-          <div className="section-eyebrow"><span className="eyebrow-mark" /> MOBILE COMPANION</div>
-          <h2>Take JARVIS<br /><span>with you.</span></h2>
-          <p>Install the official, versioned Android companion release. The phone and Wear OS packages are published only after release signing and signature verification.</p>
-        </Reveal>
+    <main className="inner-page skills-page">
+      <section className="page-hero section-wrap skills-page-hero">
         <Reveal>
-          <article className="download-platform-card android-companion-card">
-            <div className="download-platform-top">
-              <span className="download-platform-icon"><Smartphone size={24} strokeWidth={1.5}/></span>
-              <span className="availability-tag available">SIGNED RELEASE</span>
-            </div>
-            <h3>Android Companion</h3>
-            <p>Production-signed phone companion for secure desktop pairing, notifications, media controls and supported wearable connections.</p>
-            <div className="platform-requirements"><span>REQUIREMENTS</span><strong>Android 8.0 or later · local network for first pairing</strong></div>
-            <div className="platform-requirements"><span>PACKAGE TYPE</span><strong>Versioned APK · owner-signed production release</strong></div>
-            {androidRelease?.apk ? (
-              <>
-                <a className="button button-primary download-button" href="/api/download?platform=android">Download signed Android APK <ArrowDownToLine size={16}/></a>
-                <p className="asset-size">{formatBytes(androidRelease.apk.size)} · {androidRelease.tag_name} · Published {androidRelease.published_at ? new Date(androidRelease.published_at).toLocaleDateString() : "as a stable release"}</p>
-                {androidRelease.checksums && <a className="checksum-link" href={androidRelease.checksums.url} target="_blank" rel="noreferrer">Verify APK SHA-256 checksum <ArrowUpRight size={13}/></a>}
-                {androidRelease.watchApk && <a className="checksum-link" href={androidRelease.watchApk.url}>Download JARVIS Watch APK <ArrowDownToLine size={13}/></a>}
-                <a className="checksum-link" href={androidRelease.html_url} target="_blank" rel="noreferrer">View official Android release <ArrowUpRight size={13}/></a>
-              </>
-            ) : (
-              <>
-                <button type="button" className="button button-disabled download-button" disabled>Signed Android release not published yet</button>
-                <p className="asset-size">Debug and CI testing APKs are intentionally not offered as public downloads. The button activates when a versioned release passes signing and verification.</p>
-              </>
-            )}
-            <p className="asset-size">Direct APK installs may still trigger Android&apos;s app-verification prompt because the package is sideloaded. Keep Play Protect enabled and verify the published SHA-256 checksum before installation.</p>
-          </article>
+          <div className="eyebrow-pill"><span className="pill-spark">✳</span> THE JARVIS TOOLKIT / 56</div>
+          <h1>More than an assistant.<br /><span>A partner for your desktop.</span></h1>
+          <p className="page-lede">Voice, screen awareness, local AI, coding tools, automation and connected devices—brought together in one focused desktop workspace.</p>
+          <div className="hero-actions">
+            <Link className="button button-primary" href="/pricing">Explore plans &amp; pricing <ArrowRight size={16} /></Link>
+            <Link className="button button-quiet" href="/offline">Understand local AI <ArrowUpRight size={15} /></Link>
+          </div>
+          <div className="skills-hero-proof">
+            <span><ShieldCheck size={14} /> Permission-aware tools</span>
+            <span><CpuIcon /> Local + connected AI</span>
+            <span><Layers3 size={14} /> Modular capabilities</span>
+          </div>
+        </Reveal>
+        <Reveal className="skills-hero-console" delay={110}>
+          <div className="skills-console-top"><span><i /> JARVIS / WORKSPACE</span><span>CAPABILITY OVERVIEW</span></div>
+          <div className="skills-console-title"><span>ONE DESKTOP.</span><strong>MANY WAYS<br />TO GET THINGS DONE.</strong></div>
+          <div className="skills-console-list">
+            <div><AudioLines size={16}/><span>Voice &amp; conversation</span><b>01</b></div>
+            <div><Eye size={16}/><span>Screen understanding</span><b>02</b></div>
+            <div><Code2 size={16}/><span>Coding &amp; creation</span><b>03</b></div>
+            <div><BrainCircuit size={16}/><span>Local intelligence</span><b>04</b></div>
+            <div><Workflow size={16}/><span>Workflows &amp; plugins</span><b>05</b></div>
+          </div>
+          <div className="skills-console-foot"><span>BUILT AROUND YOUR WORKFLOW</span><span>MARK 56</span></div>
         </Reveal>
       </section>
-      {release?.assets.windows && <section className="page-content section-wrap installer-guide-section">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> WINDOWS QUICK START</div><h2>From download to<br /><span>first launch.</span></h2><p>The installer is published from the official Mark-56 release workflow. Use these steps after downloading the setup file.</p></Reveal>
-        <div className="offline-steps">
-          <Reveal className="offline-step"><span className="offline-step-number">01</span><div><h3>Download the official setup file</h3><p>Use the Windows download button above. For extra assurance, open the published SHA-256 checksum list and compare the checksum of the downloaded file.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={70}><span className="offline-step-number">02</span><div><h3>Run the installer</h3><p>Open the downloaded .exe and follow the setup prompts. The package is configured for a per-user installation, so a separate administrator prompt should not be needed.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={140}><span className="offline-step-number">03</span><div><h3>Launch JARVIS and finish setup</h3><p>Start JARVIS from the shortcut created by the installer, then configure your own AI provider credentials and any optional local model you plan to use.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
+
+      <section className="page-content section-wrap skills-library-section">
+        <Reveal className="section-heading">
+          <div className="section-eyebrow"><span className="eyebrow-mark" /> EXPLORE THE SKILLSET</div>
+          <h2>One assistant.<br /><span>A whole desktop toolkit.</span></h2>
+          <p>Explore the ways JARVIS can help. Some capabilities need a connected provider, local model, device permission or operating-system support; each card explains what is required.</p>
+        </Reveal>
+        <div className="skills-library-grid">
+          {skills.map((skill, index) => {
+            const Icon = skill.icon;
+            return (
+              <Reveal key={skill.number} delay={index * 45}>
+                <article className="skills-library-card">
+                  <div className="skills-card-top"><span>{skill.number} / {skill.category}</span><Icon size={22} strokeWidth={1.5}/></div>
+                  <h3>{skill.title}</h3>
+                  <p>{skill.body}</p>
+                  <div className="skills-card-tags">{skill.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                  <div className="skills-card-setup"><i /><span>{skill.setup}</span></div>
+                </article>
+              </Reveal>
+            );
+          })}
         </div>
-        {release.checksums && <p className="installer-guide-checksum"><ShieldCheck size={16} /> Checksum file: <a href={release.checksums.url} target="_blank" rel="noreferrer">{release.checksums.name} <ArrowUpRight size={13} /></a></p>}
-      </section>}
-      {release?.assets.linux && <section className="page-content section-wrap installer-guide-section">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> LINUX QUICK START</div><h2>Install on<br /><span>your Linux desktop.</span></h2><p>The Linux package contains its own Python runtime and application dependencies. A few native desktop or audio libraries may still come from your Linux distribution.</p></Reveal>
-        <div className="offline-steps">
-          <Reveal className="offline-step"><span className="offline-step-number">01</span><div><h3>Download and extract the bundle</h3><p>Download the Linux .tar.gz package, then extract it to a folder you can write to.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={70}><span className="offline-step-number">02</span><div><h3>Run the installer script</h3><p>Open a terminal in the extracted MARK-LV-Linux-x86_64 folder and run <strong>bash install.sh</strong>. On Ubuntu/Debian, the optional native libraries can be requested by running <strong>JARVIS_INSTALL_SYSTEM_LIBS=1 bash install.sh</strong>.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={140}><span className="offline-step-number">03</span><div><h3>Launch JARVIS</h3><p>Use the applications menu or run <strong>~/.local/bin/mark56</strong>. Configure your own AI provider credentials during first setup.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
+      </section>
+
+      <section className="skills-principles-section">
+        <div className="section-wrap">
+          <Reveal className="section-heading">
+            <div className="section-eyebrow"><span className="eyebrow-mark" /> THE JARVIS APPROACH</div>
+            <h2>Capable by design.<br /><span>Thoughtful by default.</span></h2>
+            <p>Power is only useful when you understand what is happening and remain in control of what the assistant can do.</p>
+          </Reveal>
+          <div className="skills-principles-grid">
+            {principles.map((principle, index) => {
+              const Icon = principle.icon;
+              return <Reveal key={principle.title} delay={index * 75}><article className="skills-principle-card"><Icon size={23}/><h3>{principle.title}</h3><p>{principle.body}</p></article></Reveal>;
+            })}
+          </div>
         </div>
-        {release.checksums && <p className="installer-guide-checksum"><ShieldCheck size={16} /> Checksum file: <a href={release.checksums.url} target="_blank" rel="noreferrer">{release.checksums.name} <ArrowUpRight size={13} /></a></p>}
-      </section>}
-      {release?.assets.macos && <section className="page-content section-wrap installer-guide-section">
-        <Reveal className="section-heading"><div className="section-eyebrow"><span className="eyebrow-mark" /> macOS QUICK START</div><h2>Bring JARVIS to<br /><span>your Mac.</span></h2><p>Choose the installer that matches your Mac&apos;s processor: Apple silicon (M-series) or Intel.</p></Reveal>
-        <div className="offline-steps">
-          <Reveal className="offline-step"><span className="offline-step-number">01</span><div><h3>Select your Mac architecture</h3><p>Use the Apple silicon or Intel button on the macOS card above. The two disk images contain different native runtimes.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={70}><span className="offline-step-number">02</span><div><h3>Move the app into Applications</h3><p>Open the downloaded DMG and drag JARVIS.app into the Applications folder, then launch it from Applications.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
-          <Reveal className="offline-step" delay={140}><span className="offline-step-number">03</span><div><h3>Review the security and privacy prompts</h3><p>These builds are not signed or notarized yet, so macOS may show a warning. Verify the download is from the official Mark-56 release before opening it, and grant microphone or screen permissions only for features you intend to use.</p></div><CheckCircle2 className="offline-step-check" size={17} /></Reveal>
+      </section>
+
+      <section className="page-content section-wrap skills-start-section">
+        <Reveal className="section-heading">
+          <div className="section-eyebrow"><span className="eyebrow-mark" /> YOUR NEXT STEP</div>
+          <h2>Choose the access<br /><span>that fits your workflow.</span></h2>
+          <p>Start with the permanent Classic licence or choose Premium for eligible future releases and ongoing feature upgrades.</p>
+        </Reveal>
+        <div className="skills-start-grid">
+          <Reveal><article><span>01 / PICK YOUR PLAN</span><h3>Choose Classic or Premium.</h3><p>Compare the one-time and subscription options, including exactly what each licence covers.</p><Link href="/pricing">Compare plans <ArrowUpRight size={14}/></Link></article></Reveal>
+          <Reveal delay={70}><article><span>02 / SET UP YOUR ASSISTANT</span><h3>Connect the tools you need.</h3><p>Choose an AI provider, add an optional local model and grant only the desktop permissions you want to use.</p><Link href="/offline">Explore local AI <ArrowUpRight size={14}/></Link></article></Reveal>
+          <Reveal delay={140}><article><span>03 / MAKE IT YOURS</span><h3>Build your own workflow.</h3><p>Enable trusted plugins, configure routines and pair supported companion devices as your setup allows.</p><Link href="/features">See all capabilities <ArrowUpRight size={14}/></Link></article></Reveal>
         </div>
-        {release.checksums && <p className="installer-guide-checksum"><ShieldCheck size={16} /> Checksum file: <a href={release.checksums.url} target="_blank" rel="noreferrer">{release.checksums.name} <ArrowUpRight size={13} /></a></p>}
-      </section>}
-      <section className="download-trust-section"><div className="section-wrap download-trust-grid">
-        <Reveal><ShieldCheck size={28}/><h3>Verified release source</h3><p>Downloads are selected from the official stable release and filtered by platform and installer file type.</p></Reveal>
-        <Reveal delay={80}><CheckCircle2 size={28}/><h3>Clear availability</h3><p>No fake download buttons. When a package isn&apos;t available, the page explains the status directly.</p></Reveal>
-        <Reveal delay={160}><CircleHelp size={28}/><h3>Need help?</h3><p>Get installation and offline setup guidance, including which pieces need internet.</p><Link href="/offline">Read offline setup <ArrowRight size={14}/></Link></Reveal>
-      </div></section>
+        <Reveal className="skills-payment-note" delay={190}>
+          <LockKeyhole size={18}/>
+          <div><strong>Secure checkout is being prepared.</strong><p>Plans and prices are visible now. Payment activation will follow Paystack merchant-account setup.</p></div>
+          <Link className="button button-primary" href="/pricing">View JARVIS pricing <ArrowRight size={15}/></Link>
+        </Reveal>
+      </section>
     </main>
   );
+}
+
+function CpuIcon() {
+  return <BrainCircuit size={14} />;
 }
