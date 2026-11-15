@@ -822,3 +822,52 @@ h1, h2, h3, p { margin-top: 0; }
  .purchase-success-card {padding:35px 21px}
  .purchase-success-status {font-size:8px;line-height:1.6}
 }
+
+
+/* Professional three-plan pricing and payment presentation */
+.pricing-section-heading {display:flex;justify-content:space-between;align-items:end;gap:24px;margin:0 0 25px}
+.pricing-section-heading h2 {margin:14px 0 0;font-size:clamp(25px,3.4vw,39px);font-weight:500;letter-spacing:-.055em}
+.pricing-section-heading h2 em {color:#91a4b2;font-family:Georgia,"Times New Roman",serif;font-weight:400}
+.pricing-section-heading>p {margin:0 0 5px;color:#8193a0;font-size:10px}
+.pricing-grid-three {grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.pricing-grid-three .pricing-card {position:relative;min-width:0;padding:24px 21px 21px;border-color:rgba(164,190,216,.15);background:linear-gradient(155deg,rgba(255,255,255,.045),rgba(255,255,255,.012) 65%)}
+.pricing-grid-three .pricing-card-premium {border-color:rgba(128,228,244,.28);background:linear-gradient(155deg,rgba(53,191,217,.09),rgba(255,255,255,.015) 62%)}
+.pricing-grid-three .pricing-card-yearly {border-color:rgba(215,182,117,.43);background:linear-gradient(155deg,rgba(215,182,117,.105),rgba(255,255,255,.014) 62%)}
+.pricing-grid-three .pricing-plan-icon {width:39px;height:39px}
+.pricing-grid-three .pricing-kicker {margin-top:25px}
+.pricing-grid-three .pricing-card h2 {font-size:clamp(22px,2.2vw,29px)}
+.pricing-grid-three .pricing-description {min-height:58px}
+.pricing-grid-three .pricing-price {margin:23px 0 17px;font-size:clamp(28px,3vw,36px);font-variant-numeric:tabular-nums}
+.pricing-card-divider {height:1px;background:rgba(164,190,216,.14);margin:0 0 18px}
+.pricing-includes-label {margin:0 0 14px;color:#8296a4;font-size:8px;font-weight:700;letter-spacing:.15em}
+.pricing-grid-three .pricing-card ul {flex:1;padding:0 0 20px;margin:0 0 18px;border:0;gap:12px}
+.pricing-grid-three .pricing-card li {font-size:9px;line-height:1.65}
+.pricing-grid-three .pricing-card li svg {color:#8fdce9}
+.pricing-card-yearly .pricing-card li svg {color:#d7b675}
+.pricing-recommended {position:absolute;top:-11px;right:18px;display:inline-flex;align-items:center;gap:5px;padding:6px 9px;background:#d7b675;color:#17140d;font-size:7px;font-weight:800;letter-spacing:.12em}
+.payment-coming-soon {display:flex;align-items:center;gap:10px;min-height:58px;padding:11px;border:1px solid rgba(128,228,244,.17);background:rgba(3,10,15,.48)}
+.payment-coming-soon-icon {display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border:1px solid rgba(128,228,244,.2);color:var(--cyan)}
+.payment-coming-soon strong,.payment-coming-soon small {display:block}
+.payment-coming-soon strong {color:#ccebf0;font-size:9px;font-weight:600}
+.payment-coming-soon small {margin-top:4px;color:#8195a2;font-size:8px;line-height:1.5}
+.pricing-plan-foot {display:block;margin-top:12px;color:#718592;font-size:8px;line-height:1.6}
+.payment-information {display:flex;align-items:center;gap:16px;margin:26px 0 0;padding:19px 21px;border:1px solid rgba(128,228,244,.15);background:linear-gradient(100deg,rgba(53,191,217,.055),rgba(255,255,255,.012))}
+.payment-information-icon {display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid rgba(128,228,244,.2);color:var(--cyan)}
+.payment-information-copy {flex:1}
+.payment-information-copy strong {color:#d7e6ec;font-size:10px;font-weight:600}
+.payment-information-copy p {max-width:590px;margin:5px 0 0;color:#8295a2;font-size:9px;line-height:1.7}
+.payment-methods {display:flex;align-items:center;gap:7px}
+.payment-methods span {display:grid;place-items:center;min-width:48px;height:27px;padding:0 7px;border:1px solid rgba(164,190,216,.16);background:rgba(4,10,15,.55);color:#a9bac4;font-size:8px;font-weight:800;font-style:italic;letter-spacing:-.03em}
+.payment-methods span:nth-child(2) {font-size:7px;letter-spacing:-.06em}
+.payment-methods span:nth-child(3) {color:#b7a0df}
+.pricing-footnote {max-width:880px}
+@media(max-width:1050px) {.pricing-grid-three {grid-template-columns:repeat(2,minmax(0,1fr))}.pricing-grid-three .pricing-card-yearly {grid-column:1/-1}.pricing-grid-three .pricing-card-yearly .pricing-description {min-height:0}}
+@media(max-width:700px) {
+ .pricing-section-heading {align-items:flex-start;flex-direction:column;gap:8px}
+ .pricing-grid-three {grid-template-columns:1fr}
+ .pricing-grid-three .pricing-card-yearly {grid-column:auto}
+ .pricing-grid-three .pricing-description {min-height:0}
+ .payment-information {align-items:flex-start;flex-wrap:wrap;padding:16px}
+ .payment-information-copy {min-width:calc(100% - 65px)}
+ .payment-methods {width:100%;padding-left:58px}
+}
