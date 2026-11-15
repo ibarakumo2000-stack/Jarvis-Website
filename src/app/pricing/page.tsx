@@ -51,7 +51,7 @@ export default function PricingPage() {
         </Reveal>
         <Reveal className="pricing-hero-note" delay={100}>
           <span className="section-eyebrow"><span className="eyebrow-mark"/> SIMPLE. CLEAR. YOURS.</span>
-          <h2>One assistant.<br/><span>Three ways to subscribe.</span></h2>
+          <h2>One assistant.<br/><span>Three ways to get JARVIS.</span></h2>
           <p>Choose a one-time Classic licence or select the Premium billing schedule that works for you. Each plan clearly explains what is included before payment is enabled.</p>
           <Link className="text-link" href="/features">Explore JARVIS capabilities <ArrowRight size={15}/></Link>
         </Reveal>
@@ -114,7 +114,7 @@ export default function PricingPage() {
         <div className="payment-information">
           <div className="payment-information-icon"><CreditCard size={19}/></div>
           <div className="payment-information-copy"><strong>Secure payments are being prepared</strong><p>Checkout will be activated after the Paystack merchant account is ready. Your plan selection and pricing are displayed now; no payment will be collected at this stage.</p></div>
-          <div className="payment-methods" aria-label="Planned payment methods"><span>VISA</span><span>mastercard</span><span>VERVE</span></div>
+          <span className="payment-status-tag"><span/> PAYMENT SETUP PENDING</span>
         </div>
 
         <p className="pricing-footnote"><ShieldCheck size={15}/> Your licence is associated with your purchase email. Premium access is subject to an active subscription and its billing period. The Classic licence applies only to JARVIS 56.0.0 and does not include later Premium releases.</p>
