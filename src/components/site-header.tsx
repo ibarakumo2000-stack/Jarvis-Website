@@ -10,7 +10,7 @@ const navigation = [
   { href: "/features", label: "Capabilities" },
   { href: "/offline", label: "Offline AI" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/downloads", label: "Downloads" },
+  { href: "/downloads", label: "JARVIS skills" },
   { href: "/updates", label: "Updates" },
   { href: "/faq", label: "Help & FAQ" },
 ];
@@ -28,7 +28,7 @@ export default function SiteHeader() {
       <div className="site-announcement">
         <span className="announcement-pulse" />
         <span>LOCAL-FIRST AI · BUILT FOR YOUR DESKTOP</span>
-        <Link href="/downloads">Explore releases <ArrowUpRight size={13} /></Link>
+        <Link href="/downloads">Explore JARVIS skills <ArrowUpRight size={13} /></Link>
       </div>
       <header className="site-header site-header-global">
         <Link className="brand" href="/" aria-label="JARVIS home" onClick={closeMenu}>
