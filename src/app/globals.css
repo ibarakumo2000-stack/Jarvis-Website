@@ -871,3 +871,7 @@ h1, h2, h3, p { margin-top: 0; }
  .payment-information-copy {min-width:calc(100% - 65px)}
  .payment-methods {width:100%;padding-left:58px}
 }
+
+.payment-status-tag {display:inline-flex;align-items:center;gap:7px;white-space:nowrap;padding:8px 10px;border:1px solid rgba(215,182,117,.24);color:#bba77e;font-size:7px;font-weight:700;letter-spacing:.11em}
+.payment-status-tag span {width:6px;height:6px;border-radius:50%;background:#c6a96c;box-shadow:0 0 9px rgba(198,169,108,.35)}
+@media(max-width:700px) {.payment-status-tag {margin-left:58px}}
